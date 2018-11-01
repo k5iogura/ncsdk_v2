@@ -2,10 +2,11 @@
 
 # Setup NCS on RaspberryPI-3 Model B+
 
+## Install NCSDK v2.08.01.02
 ***Requirement***
 
 RaspberryPI-3 Model B or B+  
-Linux-PC  
+Linux-PC with internet connection  
 
 ***On Linux PC***
 
@@ -29,7 +30,9 @@ Linux-PC
 ```
 - connect to RaspberryPI via ssh
 ```
-ssh pi@192.168.11.18
+$ ssh pi@192.168.11.18
+$ uname -a
+Linux raspberrypi 4.14.71-v7+ #1145 SMP Fri Sep 21 15:38:35 BST 2018 armv7l GNU/Linux
 ```
 Here, default ID/Password is **pi/raspberry**
 
@@ -86,3 +89,36 @@ Goodbye NCS! Device closed normally.
 NCS device working.
 ```
 OK Device Open/Close.  
+
+## UVC Camera check
+
+**Insert UVC Camera into USB Port**  
+Recognize UVC Camera to Linux
+```
+$ dmesg | tail
+[ 3935.504543] uvcvideo: Found UVC 1.00 device <unnamed> (046d:0825)
+[ 3935.519553] uvcvideo 1-1.1.3:1.0: Entity type for entity Extension 4 was not initialized!
+[ 3935.519572] uvcvideo 1-1.1.3:1.0: Entity type for entity Extension 6 was not initialized!
+[ 3935.519582] uvcvideo 1-1.1.3:1.0: Entity type for entity Extension 7 was not initialized!
+[ 3935.519593] uvcvideo 1-1.1.3:1.0: Entity type for entity Processing 2 was not initialized!
+[ 3935.519603] uvcvideo 1-1.1.3:1.0: Entity type for entity Extension 3 was not initialized!
+[ 3935.519612] uvcvideo 1-1.1.3:1.0: Entity type for entity Camera 1 was not initialized!
+[ 3935.519994] input: UVC Camera (046d:0825) as /devices/platform/soc/3f980000.usb/usb1/1-1/1-1.1/1-1.1.3/1-1.1.3:1.0/input/input0
+[ 3935.520233] usbcore: registered new interface driver uvcvideo
+[ 3935.520239] USB Video Class driver (1.1.1)
+```
+Find out UVC Camera  
+**Check OpenCV Camera sample**  
+Allow X-Window client form RaspberryPI to Linux PC X-Window server,
+```
+$ xhost + 192.168.11.18
+192.168.11.18 being added to access control list
+```
+On RaspberryPI run basic camera python script,
+```
+// install opencv + contrib + ffmpeg +...
+# apt install -y libopencv-dev libopencv-contrib-dev
+# apt install -y libqtgui4 libqttest4-perl
+$ export DISPLAY=192.168.11.10:0
+$ python3 first_contact/cam.py
+```
