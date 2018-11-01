@@ -1,5 +1,8 @@
 <img src="./files/movidius.png" alt="movidius" width="250"/>
+
 # NCSDK v2.08.01.02 with Ubuntu 16.04 on CentOS7 PC and xenial on ARM boad
+
+# For RaspberryPI+NCSDK_v2.08.01.02 is [Here](RaspberryPiModelB+.md)
 
 ## NCSDK Full Installation On Desktop PC
 ***Full Installation :***  
