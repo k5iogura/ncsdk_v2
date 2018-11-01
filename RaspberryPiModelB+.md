@@ -33,7 +33,7 @@ ssh pi@192.168.11.18
 ```
 Here, default ID/Password is **pi/raspberry**
 
-**Setup environment for NCSDK**  
+**Upgrade and setup Ubuntu 16.04 environment for NCSDK**  
 ```
 # apt update
 # apt upgrade
