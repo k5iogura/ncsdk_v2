@@ -1,5 +1,5 @@
 <img src="./files/movidius.png" alt="movidius" width="250"/>
-# NCSDK v1.12.01.01 with Ubuntu 16.04 on CentOS7 PC and xenial on ARM boad
+# NCSDK v2.08.01.02 with Ubuntu 16.04 on CentOS7 PC and xenial on ARM boad
 
 ## NCSDK Full Installation On Desktop PC
 ***Full Installation :***  
