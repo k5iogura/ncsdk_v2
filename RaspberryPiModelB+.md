@@ -1,3 +1,5 @@
+<img src="./files/movidius.png" alt="movidius" width="250"/>
+
 # Setup NCS on RaspberryPI-3 Model B+
 
 ***Requirement***
