@@ -45,11 +45,14 @@ Here, default ID/Password is **pi/raspberry**
 ```
 **Download NCSDK Version.2**
 ```
+// As installation under Home directory,,,
+$ cd
 $ git clone https://github.com/k5iogura/ncsdk_v2
 ```
-**Install NCSDK**
+**Install NCSDK API-Mode**  
+For easy checking of NCS install NCSDK API-Mode before NCSDK Full Install.
 ```
-$ cd ncsdk_v2
+$ cd ncsdk_v2/api/src
 $ make
 $ sudo make install
 ```
@@ -67,6 +70,7 @@ $ dmesg | tail
 Find out MA2X5X as Movidius NCS.  
 **Check Device Hello**
 ```
+$ cd ~/ncsdk_v2
 $ python3 examples/apps/hello_ncs_py/hello_ncs.py 
 D: [         0] ncDeviceCreate:307	ncDeviceCreate index 0
 D: [         0] ncDeviceCreate:307	ncDeviceCreate index 1
