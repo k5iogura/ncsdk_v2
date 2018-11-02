@@ -362,6 +362,11 @@ def main():
             for i in range(0, buffsize):
                 try:
                     ret,display_image[i] = cam.read()
+                    if not ret:
+                        Detector.finish(None)
+                        end_time = time.time()
+                        exit_app = True
+                        break
                     if i >= 0: image_overlapped = Detector.finish(display_image[i])
                     if i == 0: Detector.initiate(display_image[i])
                     raw_key = draw_img(image_overlapped)
@@ -379,6 +384,8 @@ def main():
                     break
             if exit_app:
                 break
+        frames_per_second = frame_count / (end_time - start_time)
+        print('Frames per Second: ' + str(frames_per_second))
         if exit_app:
             break
         if restart:
@@ -396,8 +403,6 @@ def main():
                 break
             else:
                 print("NCS: Restarted OK")
-        frames_per_second = frame_count / (end_time - start_time)
-        print('Frames per Second: ' + str(frames_per_second))
 
     # Clean up the graph and the device
     try:
@@ -406,7 +411,7 @@ def main():
     except Exception as e:
         print("all finalizeing faild",e.args)
         sys.exit(1)
-    print("finalizing OK")
+    print("finalizing OK %.2fFPS"%(frames_per_second))
 
 # main entry point for program. we'll call main() to do what needs to be done.
 if __name__ == "__main__":
