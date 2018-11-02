@@ -2,6 +2,8 @@
 
 # Setup NCS on RaspberryPI-3 Model B+
 
+# RaspberryPI-3 WiFi setup [here](RaspberryPI_WiFi.md)
+
 ## Install NCSDK v2.08.01.02
 ***Requirement***
 
