@@ -354,7 +354,7 @@ def main():
     display_image=[None for i in range(0,buffsize)]
     for input_video_file in input_video_filename_list:
         cam = cv2.VideoCapture(input_video_file)
-        frame_count = 0
+        frame_count = prdct_count = 0
         end_time = start_time = time.time()
         ret,img = cam.read()
         Detector.initiate(img)
@@ -378,14 +378,16 @@ def main():
                             exit_app = True
                             break
                     frame_count += 1
+                    if i == 0: prdct_count += 1
                 except Exception as e:
                     print("Any Exception found:",e.args)
                     exit_app = True
                     break
             if exit_app:
                 break
-        frames_per_second = frame_count / (end_time - start_time)
-        print('Frames per Second: ' + str(frames_per_second))
+        playback_per_second = frame_count / (end_time - start_time)
+        predicts_per_second = prdct_count / (end_time - start_time)
+        print('Playback per Second: %.3fFPS Predict per Second: %.2fFPS'%(playback_per_second, predicts_per_second))
         if exit_app:
             break
         if restart:
@@ -411,7 +413,7 @@ def main():
     except Exception as e:
         print("all finalizeing faild",e.args)
         sys.exit(1)
-    print("finalizing OK %.2fFPS"%(frames_per_second))
+    print("finalizing OK %.2fFPS predict per Second %.2fFPS"%(playback_per_second, predicts_per_second))
 
 # main entry point for program. we'll call main() to do what needs to be done.
 if __name__ == "__main__":
