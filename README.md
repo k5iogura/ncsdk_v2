@@ -28,15 +28,20 @@ Install ncsdk **full**
 $ cd ncsdk_v2 ; make install ; make install;
 $ tail -1 ~/.bashrc
 export "PYTHONPATH=${PYTHONPATH}:/opt/movidius/caffe/python"
+# pip3 list | grep tensorflow
+tensorflow(1.9)
+// reinstall 1.5
+# pip3 uninstall tensorflow
+# pip3 install tensorflow==1.5
 $ bash
 ```
 ***You need twice "make install".***  
 ***You must be into new "bash" to update PYTHONPATH.***  
+***You must use "tensorflow"==1.5. tesnsorflow>1.5 cause Illegal Instruction Error(Seg.V) reason why AVX Optimizaion Code in tensorflow > 1.5.***
 ```
 $ make examples
 ```
 If you're lucky man then no error. If not, but **leaving error messages in this phase is OK**.  
-
 **Say hello to NCS device**
 ```
 $ python3 examples/apps/hello_ncs_py/hello_ncs.py
