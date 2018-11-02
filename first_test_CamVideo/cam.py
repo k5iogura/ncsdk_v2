@@ -12,6 +12,7 @@ while(1):
     if ret == False:
         print(img.shape)
     cv2.imshow("camera",img)
-    cv2.waitKey(5)
+    key = cv2.waitKey(5)
+    if key != -1: break
     end   = time.time()
     print('%5.3f\b\b\b\b\b'%(1./(end-start)))
