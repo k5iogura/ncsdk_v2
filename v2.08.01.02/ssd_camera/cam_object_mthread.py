@@ -130,36 +130,6 @@ def overlay_on_image(display_image, object_info):
     cv2.rectangle(display_image,(0, 0),(100, 15), (128, 128, 128), -1)
     cv2.putText(display_image, "Q to Quit", (10, 12), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 0, 0), 1)
 
-
-#return False if found invalid args or True if processed ok
-def handle_args():
-    global resize_output, resize_output_width, resize_output_height
-    for an_arg in argv:
-        if (an_arg == argv[0]):
-            continue
-
-        elif (str(an_arg).lower() == 'help'):
-            return False
-
-        elif (str(an_arg).startswith('resize_window=')):
-            try:
-                arg, val = str(an_arg).split('=', 1)
-                width_height = str(val).split('x', 1)
-                resize_output_width = int(width_height[0])
-                resize_output_height = int(width_height[1])
-                resize_output = True
-                print ('GUI window resize now on: \n  width = ' +
-                       str(resize_output_width) +
-                       '\n  height = ' + str(resize_output_height))
-            except:
-                print('Error with resize_window argument: "' + an_arg + '"')
-                return False
-        else:
-            return False
-
-    return True
-
-
 class detector:
     def __init__(self):
         self.initiated = False
@@ -327,21 +297,7 @@ def draw_img(display_image):
 def main():
     global resize_output, resize_output_width, resize_output_height
 
-#    if (not handle_args()):
-#        print_usage()
-#        return 1
-
     Detector = detector()
-
-    # get list of all the .mp4 files in the image directory
-#    input_video_filename_list = os.listdir(input_video_path)
-#    input_video_filename_list = [i for i in input_video_filename_list if i.endswith('.mp4')]
-#    input_video_filename_list = ["police_car_6095_shortened_960x540.mp4"]
-
-#    if (len(input_video_filename_list) < 1):
-#        # no images to show
-#        print('No video (.mp4) files found')
-#        return 1
 
     cv2.namedWindow(cv_window_name)
     cv2.moveWindow(cv_window_name, 10,  10)
@@ -350,52 +306,36 @@ def main():
     restart  = True
     buffsize = 3
     display_image=[None for i in range(0,buffsize)]
-    for jj in range(0,2):
-        cam = cv2.VideoCapture(0)
-        frame_count = 0
-        end_time = start_time = time.time()
-        ret,img = cam.read()
-        Detector.initiate(img)
-        while(True):
-            for i in range(0, buffsize):
-                try:
-                    ret,display_image[i] = cam.read()
-                    if i >= 0: image_overlapped = Detector.finish(display_image[i])
-                    if i == 0: Detector.initiate(display_image[i])
-                    raw_key = draw_img(image_overlapped)
-                    if (raw_key != -1):
-                        print(raw_key)
-                        if (handle_keys(raw_key) == False):
-                            Detector.finish(None)
-                            end_time = time.time()
-                            exit_app = True
-                            break
-                    frame_count += 1
-                except Exception as e:
-                    print("Any Exception found:",e.args)
-                    exit_app = True
-                    break
-            if exit_app:
+    cam = cv2.VideoCapture(0)
+    end_time = start_time = time.time()
+    ret,img = cam.read()
+    Detector.initiate(img)
+    playback_count = predicts_count = 0
+    while(True):
+        for i in range(0, buffsize):
+            try:
+                ret,display_image[i] = cam.read()
+                if i >= 0: image_overlapped = Detector.finish(display_image[i])
+                if i == 0: Detector.initiate(display_image[i])
+                raw_key = draw_img(image_overlapped)
+                if (raw_key != -1):
+                    print(raw_key)
+                    if (handle_keys(raw_key) == False):
+                        Detector.finish(None)
+                        end_time = time.time()
+                        exit_app = True
+                        break
+                playback_count += 1
+                if i == 0: predicts_count += 1
+            except Exception as e:
+                print("Any Exception found:",e.args)
+                exit_app = True
                 break
         if exit_app:
             break
-        if restart:
-            try:
-                Detector.close()
-                time.sleep(1.0)
-                Detector = detector()
-                Detector.initiate(display_image[0])
-                cam.release()
-            except Exception as e:
-                print("NCS: Restart not work-01",e.args)
-                restart = False
-            if not restart:
-                print("NCS: Restart not work-02")
-                break
-            else:
-                print("NCS: Restarted OK")
-        frames_per_second = frame_count / (end_time - start_time)
-        print('Frames per Second: ' + str(frames_per_second))
+
+    playback_per_second = playback_count / (end_time - start_time)
+    predicts_per_second = predicts_count / (end_time - start_time)
 
     # Clean up the graph and the device
     try:
@@ -404,7 +344,7 @@ def main():
     except Exception as e:
         print("all finalizeing faild",e.args)
         sys.exit(1)
-    print("finalizing OK")
+    print("finalizing OK playback: %.2fFPS predict: %.2fFPS"%(playback_per_second, predicts_per_second))
 
 # main entry point for program. we'll call main() to do what needs to be done.
 if __name__ == "__main__":
