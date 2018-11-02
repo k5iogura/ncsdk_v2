@@ -194,6 +194,8 @@ class detector:
             self.graph_data
         )
 
+        mvnc.global_set_option(mvnc.GlobalOption.RW_LOG_LEVEL, mvnc.LogLevel.FATAL)
+
         # Run an inference on the passed image
         # image_to_classify is the image on which an inference will be performed
         #    upon successful return this image will be overlayed with boxes
