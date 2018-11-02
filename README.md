@@ -63,6 +63,11 @@ $ python3 cam_object_mthread.py
 "graph" file is generated from SSD_MobileNet caffemodel for NCSDK_V2. **Graph file format of NCSDK_v1 and NCSDK_v2 are not Compatible**, so that need to compile model and prototxt by mvNCCompile for NCSDK_v2  
 <img src="./files/cam_object_mthread.png" alt="Camera Objects" width="480"/>  
 NCS recognizes my Ocsillo Scope as "TVmonitor";-)
+- asynchronous prediction and loading images.  
+- Single NCS **3.79FPS**  
+- Video playback **11.26FPS**
+- actual camera resolution: **640.0 x 480.0**  
+- 300x300 Neural Network input size  
 
 ## Object detection of Video
 Tested sample bellow,
