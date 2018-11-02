@@ -73,7 +73,8 @@ $ python3 video_objects_mthread.py
 <img src="./files/video_object_mthread.png" alt="Video Objects" width="480"/>  
 
 - asynchronous prediction and loading images.  
-- Single NCS **17.63FPS**
+- Single NCS **5.83FPS**  
+- Video playback **17.63FPS**
 - actual video resolution: **960.0 x 540.0**  
 - 300x300 Neural Network input size  
 Nov.02.2018  
