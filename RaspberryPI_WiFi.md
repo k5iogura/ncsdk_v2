@@ -5,6 +5,15 @@
     RaspberryPI-3 with streach raspbian  
     Other PC can connect RaspberryPI-3 via ssh(need empty file /boot/ssh)  
     Internet Access Point ESSID and Passphrase  
+
+- **Search RaspberryPI in your network**  
+    Connect RaspberryPI to local network via **Wired LAN**  
+    Use arp-scan command  
+```
+    arp-scan -l --interface enp3s0
+    192.168.11.18	b8:27:eb:1b:df:b5	Raspberry Pi Foundation
+```
+Find out "Raspberry"
 ```
 // Look at login message
 ...
