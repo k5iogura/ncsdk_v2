@@ -16,6 +16,7 @@ import sys
 from sys import argv
 #import video_processor
 import queue
+from g_detector import *
 
 # name of the opencv window
 cv_window_name = "SSD Mobilenet"
@@ -130,159 +131,29 @@ def overlay_on_image(display_image, object_info):
     cv2.rectangle(display_image,(0, 0),(100, 15), (128, 128, 128), -1)
     cv2.putText(display_image, "Q to Quit", (10, 12), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 0, 0), 1)
 
-class detector:
-    def __init__(self):
-        self.initiated = False
-        self.output    = None
+def overlay(image_to_classify, output):
+    # number of boxes returned
+    num_valid_boxes = int(output[0])
 
-        # configure the NCS
-        mvnc.global_set_option(mvnc.GlobalOption.RW_LOG_LEVEL, mvnc.LogLevel.DEBUG)
+    for box_index in range(num_valid_boxes):
+            base_index = 7+ box_index * 7
+            if (not numpy.isfinite(output[base_index]) or
+                    not numpy.isfinite(output[base_index + 1]) or
+                    not numpy.isfinite(output[base_index + 2]) or
+                    not numpy.isfinite(output[base_index + 3]) or
+                    not numpy.isfinite(output[base_index + 4]) or
+                    not numpy.isfinite(output[base_index + 5]) or
+                    not numpy.isfinite(output[base_index + 6])):
+                # boxes with non finite (inf, nan, etc) numbers must be ignored
+                continue
 
-        # Get a list of ALL the sticks that are plugged in
-        self.devices = mvnc.enumerate_devices()
-        if len(self.devices) == 0:
-            print('No devices found')
-            quit()
+            x1 = max(int(output[base_index + 3] * image_to_classify.shape[0]), 0)
+            y1 = max(int(output[base_index + 4] * image_to_classify.shape[1]), 0)
+            x2 = min(int(output[base_index + 5] * image_to_classify.shape[0]), image_to_classify.shape[0]-1)
+            y2 = min((output[base_index + 6] * image_to_classify.shape[1]), image_to_classify.shape[1]-1)
 
-        mvnc.global_set_option(mvnc.GlobalOption.RW_LOG_LEVEL, mvnc.LogLevel.FATAL)
-        # Pick the first stick to run the network
-        self.device = mvnc.Device(self.devices[0])
-
-        # Open the NCS
-        self.device.open()
-
-        graph_filename = 'graph'
-
-        # Load graph file to memory buffer
-        self.graph_data = None
-        with open(graph_filename, mode='rb') as f:
-            self.graph_data = f.read()
-
-        self.ssd_mobilenet_graph = mvnc.Graph('graph1')
-
-        self.input_fifo, self.output_fifo = self.ssd_mobilenet_graph.allocate_with_fifos(
-            self.device,
-            self.graph_data
-        )
-
-        # Run an inference on the passed image
-        # image_to_classify is the image on which an inference will be performed
-        #    upon successful return this image will be overlayed with boxes
-        #    and labels identifying the found objects within the image.
-        # ssd_mobilenet_graph is the Graph object from the NCAPI which will
-        #    be used to peform the inference.
-
-    def run_inference(self,image_to_classify):
-
-        start = time.time()
-        self.loadTensor(image_to_classify)
-        t1 = time.time() - start
-
-        cv2.waitKey(150)
-        start = time.time()
-        output = self.getResult()
-        t2 = time.time() - start
-
-        start = time.time()
-        self.overlay(image_to_classify, output)
-        t3 = time.time() - start
-
-        print("load/getResult/overlay= %f\t%f\t%f"%(t1,t2,t3))
-
-    def initiate(self, image_to_classify):
-        self.initiated = True
-        # preprocess the image to meet nework expectations
-        resized_image = preprocess_image(image_to_classify)
-
-        # Send the image to the NCS as 16 bit floats
-        self.ssd_mobilenet_graph.queue_inference_with_fifo_elem(
-            self.input_fifo,
-            self.output_fifo,
-            resized_image.astype(numpy.float32),
-            resized_image
-        )
-
-    def finish(self, image_source=None):
-        copy_image = None
-        if self.initiated:
-            output, _ = self.output_fifo.read_elem()
-            if image_source is not None:
-                copy_image = image_source.copy()
-                self.overlay(copy_image, output)
-            self.output = output
-            self.initiated = False
-        elif image_source is not None:
-            copy_image = image_source.copy()
-            self.overlay(copy_image, self.output)
-
-        return copy_image
-
-    def getResult(self):
-        # Get the result from the NCS
-        output, _ = self.output_fifo.read_elem()
-        #  output
-        #   a.	First fp16 value holds the number of valid detections = num_valid.
-        #   b.	The next 6 values are unused.
-        #   c.	The next (7 * num_valid) values contain the valid detections data
-        #       Each group of 7 values will describe an object/box These 7 values in order.
-        #       The values are:
-        #         0: image_id (always 0)
-        #         1: class_id (this is an index into labels)
-        #         2: score (this is the probability for the class)
-        #         3: box left location within image as number between 0.0 and 1.0
-        #         4: box top location within image as number between 0.0 and 1.0
-        #         5: box right location within image as number between 0.0 and 1.0
-        #         6: box bottom location within image as number between 0.0 and 1.0
-        return output
-
-    def overlay(self, image_to_classify, output):
-        # number of boxes returned
-        num_valid_boxes = int(output[0])
-
-        for box_index in range(num_valid_boxes):
-                base_index = 7+ box_index * 7
-                if (not numpy.isfinite(output[base_index]) or
-                        not numpy.isfinite(output[base_index + 1]) or
-                        not numpy.isfinite(output[base_index + 2]) or
-                        not numpy.isfinite(output[base_index + 3]) or
-                        not numpy.isfinite(output[base_index + 4]) or
-                        not numpy.isfinite(output[base_index + 5]) or
-                        not numpy.isfinite(output[base_index + 6])):
-                    # boxes with non finite (inf, nan, etc) numbers must be ignored
-                    continue
-
-                x1 = max(int(output[base_index + 3] * image_to_classify.shape[0]), 0)
-                y1 = max(int(output[base_index + 4] * image_to_classify.shape[1]), 0)
-                x2 = min(int(output[base_index + 5] * image_to_classify.shape[0]), image_to_classify.shape[0]-1)
-                y2 = min((output[base_index + 6] * image_to_classify.shape[1]), image_to_classify.shape[1]-1)
-
-                # overlay boxes and labels on to the image
-                overlay_on_image(image_to_classify, output[base_index:base_index + 7])
-
-    def close(self):
-        # Clean up the graph and the device
-        self.input_fifo.destroy()
-        self.output_fifo.destroy()
-        self.ssd_mobilenet_graph.destroy()
-        self.device.close()
-        self.device.destroy()
-
-# prints usage information
-def print_usage():
-    print('\nusage: ')
-    print('python3 run_video.py [help][resize_window=<width>x<height>]')
-    print('')
-    print('options:')
-    print('  help - prints this message')
-    print('  resize_window - resizes the GUI window to specified dimensions')
-    print('                  must be formated similar to resize_window=1280x720')
-    print('')
-    print('Example: ')
-    print('python3 run_video.py resize_window=1920x1080')
-
-
-# This function is called from the entry point to do
-# all the work.
+            # overlay boxes and labels on to the image
+            overlay_on_image(image_to_classify, output[base_index:base_index + 7])
 
 def draw_img(display_image):
     global resize_output, resize_output_width, resize_output_height
@@ -297,7 +168,8 @@ def draw_img(display_image):
 def main():
     global resize_output, resize_output_width, resize_output_height
 
-    Detector = detector()
+    Detector = detector(overlay)
+    Detector.set_preproc(preprocess_image)
 
     exit_app = False
     restart  = True
@@ -317,6 +189,7 @@ def main():
     ret,img = cam.read()
     Detector.initiate(img)
     playback_count = predicts_count = 0
+    playback_per_second = predicts_per_second = 0
     start_time = time.perf_counter()
     while(True):
         for i in range(0, buffsize):
