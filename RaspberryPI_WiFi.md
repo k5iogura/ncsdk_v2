@@ -1,30 +1,34 @@
 # On RaspberryPI-3 how to setup WiFi
 
-- **Factory RaspberryPI-3 has WiFi setup?**  
-- **preparement**  
-    RaspberryPI-3 with streach raspbian  
-    Other PC can connect RaspberryPI-3 via ssh(need empty file /boot/ssh)  
-    Internet Access Point ESSID and Passphrase  
+## RaspberryPI-3 from Factory has WiFi setup?
 
-- **Search RaspberryPI in your network**  
-    Connect RaspberryPI to local network via **Wired LAN**  
-    Use arp-scan command  
+- **prepare**  
+    RaspberryPI-3 with streach raspbian  
+    Other PC can connect RaspberryPI-3 via ssh(need empty file **/boot/ssh**)  
+    Wired router connect internet  
+    Wireless Access Point ESSID and Passphrase  
+
+- **Search RaspberryPI IP Address on other PC in your local network**  
+    Connect RaspberryPI to your router via **Wired LAN**  
+    Use arp-scan command **on Other PC**  
 ```
-    arp-scan -l --interface enp3s0
+    # arp-scan -l --interface eth0
     192.168.11.18	b8:27:eb:1b:df:b5	Raspberry Pi Foundation
 ```
-Find out "Raspberry"
+Find out "Raspberry" and login it via ssh (**pi/raspberry** is default)  
 ```
+$ ssh pi@192.168.11.18
 // Look at login message
 ...
 Wi-Fi is disabled because the country is not set.
 raspberry@pi $
 ```
-When factory out RaspberryPI-3B+ WiFI is disable setting.  
+Due to above message when factory out RaspberryPI-3B+ **WiFi is disable setting**.  
 
 - **Scan Access Point near you to connect**  
+Search AP on other PC or RaspberryPI console
 ```
-     $ sudo iwlist wlan0 scan | grep ESSID
+$ sudo iwlist wlan0 scan | grep ESSID
                     ESSID:"**************"
                     ESSID:"**************"
                     ....
@@ -33,7 +37,7 @@ Found many AP near here:-) Select your known AP in the ESSID list.
 
 - **Start wpa_supplicant@wlan0.service via systemctl**  
 RaspberryPI-3 is controlling WiFi as **wpa_supplicant@wlan0.service**.  
-At first start wpa_supplicant@wlan.service to communicate raspi-config and services.  
+**At first** start wpa_supplicant@wlan.service to communicate raspi-config and services.  
 ```
 $ sudo systemctl status wpa_supplicant@wlan0.service
 ● wpa_supplicant@wlan0.service - WPA supplicant daemon (interface-specific versi
@@ -48,7 +52,7 @@ Created symlink /etc/systemd/system/multi-user.target.wants/wpa_supplicant@wlan0
 Look at login message, message don't show "Wi-Fi is disable".  
 
 - **Create /etc/wpa_supplicant-wlan0.conf as WEP Access Point**  
-At next create file including network setup, essid, passphrase.  
+**At next** create file including network setup, essid, passphrase.  
 This sample is for WEP AP.  WEP passphrase is set as wep_key0=.
 ```
 // create wpa_supplicant-wlan0.conf as WEP access
@@ -89,7 +93,7 @@ wlan0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
 ```
 wireless adaptor "wlan0" setup done. WiFi-AP deploys IP-Address to RaspberryPI-3 as DHCP server.  
 
-- **Check scanning frm Other PC on same network**  
+- **Check scanning RaspberryPI from Other PC in locak network**  
 ```
 arp-scan -l --interface enp3s0
 [sudo] ogura のパスワード:
@@ -111,8 +115,18 @@ Found RaspberryPI as 192.168.11.19 (as 3 items).
 Disconnect Wired-LAN Cable and connect RaspberryPI via WiFi.  
 ```
 $ ssh pi@192.168.11.19
+pi@192.168.11.19's password: 
+Linux raspberrypi 4.14.71-v7+ #1145 SMP Fri Sep 21 15:38:35 BST 2018 armv7l
+The programs included with the Debian GNU/Linux system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+Last login: Sat Nov  3 02:46:54 2018 from 192.168.11.10
+SSH is enabled and the default password for the 'pi' user has not been changed.
+This is a security risk - please login as the 'pi' user and type 'passwd' to set a new password.
 ```
-Here, ID/Password is **pi/raspberry** default too.  
+Here, ID/Password is pi/raspberry default too.  
 
 ### This is the end of story abount connection setup with RaspberryPI-3 via WiFi to other PC.  
 Nov.02.2018  
