@@ -144,6 +144,7 @@ class detector:
             print('No devices found')
             quit()
 
+        mvnc.global_set_option(mvnc.GlobalOption.RW_LOG_LEVEL, mvnc.LogLevel.FATAL)
         # Pick the first stick to run the network
         self.device = mvnc.Device(self.devices[0])
 
@@ -164,7 +165,6 @@ class detector:
             self.graph_data
         )
 
-        mvnc.global_set_option(mvnc.GlobalOption.RW_LOG_LEVEL, mvnc.LogLevel.FATAL)
         # Run an inference on the passed image
         # image_to_classify is the image on which an inference will be performed
         #    upon successful return this image will be overlayed with boxes
@@ -299,15 +299,22 @@ def main():
 
     Detector = detector()
 
-    cv2.namedWindow(cv_window_name)
-    cv2.moveWindow(cv_window_name, 10,  10)
-
     exit_app = False
     restart  = True
     buffsize = 3
     display_image=[None for i in range(0,buffsize)]
     cam = cv2.VideoCapture(0)
+    if not cam.isOpened():
+        print("Not found camera /dev/video0")
+        sys.exit(1)
+    cam.set(cv2.CAP_PROP_FPS,30)
+    cam.set(cv2.CAP_PROP_FRAME_WIDTH,320)
+    cam.set(cv2.CAP_PROP_FRAME_HEIGHT,240)
     end_time = start_time = time.time()
+
+    cv2.namedWindow(cv_window_name)
+    cv2.moveWindow(cv_window_name, 10,  10)
+
     ret,img = cam.read()
     Detector.initiate(img)
     playback_count = predicts_count = 0
@@ -340,6 +347,7 @@ def main():
     # Clean up the graph and the device
     try:
         Detector.close()
+        cam.release()
         cv2.destroyAllWindows()
     except Exception as e:
         print("all finalizeing faild",e.args)
