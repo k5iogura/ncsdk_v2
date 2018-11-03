@@ -37,7 +37,7 @@ $ bash
 ```
 ***You need twice "make install".***  
 ***You must be into new "bash" to update PYTHONPATH.***  
-***You must use "tensorflow"==1.5. tesnsorflow>1.5 cause Illegal Instruction Error(Seg.V) reason why AVX Optimizaion Code in tensorflow > 1.5.***
+***You must use "tensorflow"==1.5 because tesnsorflow>1.5 cause Illegal Instruction Error(Seg.V) having AVX Optimizaion Code.***
 ```
 $ make examples
 ```
