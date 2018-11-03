@@ -1,6 +1,6 @@
 # On RaspberryPI-3 how to setup WiFi
 
-- ** Factory RaspberryPI-3 has WiFi setup?**  
+- **Factory RaspberryPI-3 has WiFi setup?**  
 - **preparement**  
     RaspberryPI-3 with streach raspbian  
     Other PC can connect RaspberryPI-3 via ssh(need empty file /boot/ssh)  
