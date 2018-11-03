@@ -310,7 +310,6 @@ def main():
     cam.set(cv2.CAP_PROP_FPS,30)
     cam.set(cv2.CAP_PROP_FRAME_WIDTH,320)
     cam.set(cv2.CAP_PROP_FRAME_HEIGHT,240)
-    end_time = start_time = time.time()
 
     cv2.namedWindow(cv_window_name)
     cv2.moveWindow(cv_window_name, 10,  10)
@@ -318,6 +317,7 @@ def main():
     ret,img = cam.read()
     Detector.initiate(img)
     playback_count = predicts_count = 0
+    start_time = time.perf_counter()
     while(True):
         for i in range(0, buffsize):
             try:
@@ -326,10 +326,8 @@ def main():
                 if i == 0: Detector.initiate(display_image[i])
                 raw_key = draw_img(image_overlapped)
                 if (raw_key != -1):
-                    print(raw_key)
                     if (handle_keys(raw_key) == False):
                         Detector.finish(None)
-                        end_time = time.time()
                         exit_app = True
                         break
                 playback_count += 1
@@ -338,11 +336,18 @@ def main():
                 print("Any Exception found:",e.args)
                 exit_app = True
                 break
+        if playback_count > 33:
+            end_time = time.perf_counter()
+            playback_per_second = playback_count / (end_time - start_time)
+            predicts_per_second = predicts_count / (end_time - start_time)
+            sys.stdout.write('\b'*20)
+            sys.stdout.write("%8.3f/%8.3fFPS"%(predicts_per_second, playback_per_second))
+            sys.stdout.flush()
+            start_time = time.perf_counter()
+            playback_count = predicts_count = 0
+
         if exit_app:
             break
-
-    playback_per_second = playback_count / (end_time - start_time)
-    predicts_per_second = predicts_count / (end_time - start_time)
 
     # Clean up the graph and the device
     try:
@@ -352,7 +357,7 @@ def main():
     except Exception as e:
         print("all finalizeing faild",e.args)
         sys.exit(1)
-    print("finalizing OK playback: %.2fFPS predict: %.2fFPS"%(playback_per_second, predicts_per_second))
+    print("\nfinalizing OK playback: %.2fFPS predict: %.2fFPS"%(playback_per_second, predicts_per_second))
 
 # main entry point for program. we'll call main() to do what needs to be done.
 if __name__ == "__main__":
