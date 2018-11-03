@@ -39,3 +39,10 @@ $ raspivid -o video.h264 -t 5000
 // playback
 $ omxplayer video.h264
 ```
+
+## numpy interface via imutils
+```
+$ pip3 install imutils
+$ python3 -c "from imutils.video import VideoStream"
+```
+You can handle CSI-Camera like USB camera interface.  
