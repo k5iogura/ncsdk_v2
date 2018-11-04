@@ -15,8 +15,10 @@ import argparse
 import sys
 from sys import argv
 #import video_processor
-import queue
+#import queue
 from g_detector import *
+
+from imutils.video import FPS
 
 # name of the opencv window
 cv_window_name = "SSD Mobilenet"
@@ -44,6 +46,45 @@ resize_output_height = 0
 
 # read video files from this directory
 input_video_path = '.'
+
+class video_source:
+    def __init__(self,source_mode='UVC', deviceNo=0, fps= 30,w=320, h=240):
+        self.source_mode = source_mode
+
+        if  self.source_mode == 'PiCamera':
+            from imutils.video import VideoStream
+            self.video_obj = VideoStream(usePiCamera=True).start()
+            time.sleep(1)   # warm up
+            print("video_source : setup PiCamera")
+        else:
+            self.video_obj = cv2.VideoCapture(device)
+            time.sleep(1)   # warm up
+            if not self.video_obj.isOpened():
+                print("Not found uvc camera /dev/video"+str(deviceNo))
+                quit()
+            self.video_obj.set(cv2.CAP_PROP_FPS,fps)
+            self.video_obj.set(cv2.CAP_PROP_FRAME_WIDTH,w)
+            self.video_obj.set(cv2.CAP_PROP_FRAME_HEIGHT,h)
+            print("video_source : setup UVC as default %dfps %d/%d"%(fps,w,h))
+
+    def start(self):
+        return self
+
+    def read(self):
+        if self.source_mode == 'UVC':
+            ret, image = self.video_obj.read()
+            if not ret:
+                print("Cannot read from video source opencv")
+                quit()
+        else:
+            image = self.video_obj.read()
+        return image
+
+    def release(self):
+        if self.source_mode == 'UVC':
+            self.video_obj.release()
+        else:
+            self.video_obj.stop()
 
 # create a preprocessed image from the source image that complies to the
 # network expectations and return it
@@ -162,7 +203,8 @@ def draw_img(display_image):
                                    (resize_output_width, resize_output_height),
                                    cv2.INTER_LINEAR)
     cv2.imshow(cv_window_name, display_image)
-    raw_key = cv2.waitKey(1)
+    #raw_key = cv2.waitKey(1)
+    raw_key = cv2.waitKey(100)
     return raw_key
 
 def main():
@@ -175,18 +217,12 @@ def main():
     restart  = True
     buffsize = 3
     display_image=[None for i in range(0,buffsize)]
-    cam = cv2.VideoCapture(0)
-    if not cam.isOpened():
-        print("Not found camera /dev/video0")
-        sys.exit(1)
-    cam.set(cv2.CAP_PROP_FPS,30)
-    cam.set(cv2.CAP_PROP_FRAME_WIDTH,320)
-    cam.set(cv2.CAP_PROP_FRAME_HEIGHT,240)
+    cam = video_source('PiCamera').start()
 
     cv2.namedWindow(cv_window_name)
     cv2.moveWindow(cv_window_name, 10,  10)
 
-    ret,img = cam.read()
+    img = cam.read()
     Detector.initiate(img)
     playback_count = predicts_count = 0
     playback_per_second = predicts_per_second = 0
@@ -194,7 +230,7 @@ def main():
     while(True):
         for i in range(0, buffsize):
             try:
-                ret,display_image[i] = cam.read()
+                display_image[i] = cam.read()
                 if i >= 0: image_overlapped = Detector.finish(display_image[i])
                 if i == 0: Detector.initiate(display_image[i])
                 raw_key = draw_img(image_overlapped)
