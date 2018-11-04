@@ -43,7 +43,7 @@ def draw_img(display_image):
                                    (resize_output_width, resize_output_height),
                                    cv2.INTER_LINEAR)
     cv2.imshow(cv_window_name, display_image)
-    key = cv2.waitKey(100)
+    key = cv2.waitKey(1)
     return key
 
 def decode_key(key):
@@ -77,6 +77,7 @@ def main(args):
     playback_per_second = predicts_per_second = 0
     display_image=[None for i in range(0,buffsize)]
     start_time = time.perf_counter()
+    start_frames = Detector[0].frames
     while(True):
         for i in range(0, buffsize):
             try:
@@ -97,12 +98,14 @@ def main(args):
                 break
         if playback_count > 33:
             end_time = time.perf_counter()
+            end_frames = Detector[0].frames
             playback_per_second = playback_count / (end_time - start_time)
-            predicts_per_second = predicts_count / (end_time - start_time)
+            predicts_per_second = (end_frames - start_frames) / (end_time - start_time)
             sys.stdout.write('\b'*20)
             sys.stdout.write("%8.3f/%8.3fFPS"%(predicts_per_second, playback_per_second))
             sys.stdout.flush()
             start_time = time.perf_counter()
+            start_frames = Detector[0].frames
             playback_count = predicts_count = 0
 
         if exit_app:

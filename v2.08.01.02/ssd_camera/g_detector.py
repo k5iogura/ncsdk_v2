@@ -12,6 +12,7 @@ class detector:
     deviceEmpy = [ 1 for i in range(0, 10) ]
     deviceInfo = True
     output = None
+    frames = 0
     def __init__(self, callback_func, graph_filename="graph"):
         self.deviceNo  = -1
         self.initiated = False
@@ -73,6 +74,7 @@ class detector:
     def initiate(self, image_source):
         if self.deviceNo < 0: return
 
+        detector.frames += 1
         self.initiated = True
 
         if self.preproc is not None:
