@@ -1,4 +1,4 @@
-# CSI Camera Setup on RaspberryPI-3
+# Setup MIPI-CSI Camera on RaspberryPI-3
 
 ### *prepare*  
 - RaspberryPI-3 Model B or B++  
@@ -7,7 +7,25 @@
   
 - element14 CSI Camera  
 
+### Raspberry Pi NoIR Camera V2
+
+**Looking at Package**  
+Front view:  
+Raspberry Pi  
+NoIR Camera V2  
+element14
+element14.com
+
+Back view:
+- Raspberry Pi, NoIR Camera Board V2, 8MP  
+elemet14.com/raspberrypi
+
+Comments of Web-site might guess that **NoIR** means this Camera **without IR-Filter**.  
+Therefore using it with IR-LED Light it can take a picture in the dark.  
+
 ### Attatch element14 on RaspberryPI-3 board  
+Pull up connector and insert FFC.  
+**Notice "bule" line direction.**  
 
 ![](files/raspi+csi01.jpg)  
 ![](files/raspi+csi02.jpg)  
@@ -39,11 +57,11 @@ $ raspivid -o video.h264 -t 5000
 // playback
 $ omxplayer video.h264
 ```
-omxplay not work, don't warry it.  
+omxplay not work, don't warry about it.  
 
 ### numpy interface via imutils
 
-According to many Web comments, use libatras, use libopenblas, liblapack to enhance numpy performance. But after installing picamera[array] **numpy was not correctlly working**. so that I operated bellow,
+According to many Web comments, use libatras, use libopenblas, liblapack to enhance numpy performance. **But after installing picamera[array] numpy was not correctlly working**. so that I operated bellow,
 ```
 $ apt install libopenblas-base libopenblas-dev
 $ pip3 uninstall picamera[array]
