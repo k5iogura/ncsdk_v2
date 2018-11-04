@@ -86,7 +86,7 @@ def main(args):
                 key = draw_img(image_overlapped)
                 if (key != -1):
                     if (decode_key(key) == False):
-                        Detector[i].finish(None)
+                        for j in range(0,buffsize): Detector[j].finish(None)
                         exit_app = True
                         break
                 playback_count += 1
