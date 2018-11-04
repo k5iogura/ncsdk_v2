@@ -2,7 +2,7 @@
 
 ### **Use Case from Movidius HP**  
 ![](files/ncs_workflow.jpg)
-### **With Raspberry Pi ModelB
+### **With Raspberry Pi ModelB**
 ![](files/ncsx1-raspi.jpg)
 ### **Kaga-denshi**  
 ![](files/ncs-kagaM.2.jpg)
