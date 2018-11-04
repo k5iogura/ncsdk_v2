@@ -1,3 +1,5 @@
+import time
+
 class video_source:
     def __init__(self,source_mode='UVC', deviceNo=0, fps= 30,w=320, h=240):
         self.source_mode = source_mode
@@ -8,7 +10,8 @@ class video_source:
             time.sleep(1)   # warm up
             print("video_source : setup PiCamera")
         else:
-            self.video_obj = cv2.VideoCapture(device)
+            import cv2
+            self.video_obj = cv2.VideoCapture(deviceNo)
             time.sleep(1)   # warm up
             if not self.video_obj.isOpened():
                 print("Not found uvc camera /dev/video"+str(deviceNo))

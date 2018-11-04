@@ -17,8 +17,7 @@ from sys import argv
 #import video_processor
 #import queue
 from g_detector import *
-
-from imutils.video import FPS
+from g_camera   import *
 
 # name of the opencv window
 cv_window_name = "SSD Mobilenet"
@@ -46,45 +45,6 @@ resize_output_height = 0
 
 # read video files from this directory
 input_video_path = '.'
-
-class video_source:
-    def __init__(self,source_mode='UVC', deviceNo=0, fps= 30,w=320, h=240):
-        self.source_mode = source_mode
-
-        if  self.source_mode == 'PiCamera':
-            from imutils.video import VideoStream
-            self.video_obj = VideoStream(usePiCamera=True).start()
-            time.sleep(1)   # warm up
-            print("video_source : setup PiCamera")
-        else:
-            self.video_obj = cv2.VideoCapture(device)
-            time.sleep(1)   # warm up
-            if not self.video_obj.isOpened():
-                print("Not found uvc camera /dev/video"+str(deviceNo))
-                quit()
-            self.video_obj.set(cv2.CAP_PROP_FPS,fps)
-            self.video_obj.set(cv2.CAP_PROP_FRAME_WIDTH,w)
-            self.video_obj.set(cv2.CAP_PROP_FRAME_HEIGHT,h)
-            print("video_source : setup UVC as default %dfps %d/%d"%(fps,w,h))
-
-    def start(self):
-        return self
-
-    def read(self):
-        if self.source_mode == 'UVC':
-            ret, image = self.video_obj.read()
-            if not ret:
-                print("Cannot read from video source opencv")
-                quit()
-        else:
-            image = self.video_obj.read()
-        return image
-
-    def release(self):
-        if self.source_mode == 'UVC':
-            self.video_obj.release()
-        else:
-            self.video_obj.stop()
 
 # create a preprocessed image from the source image that complies to the
 # network expectations and return it
@@ -207,7 +167,7 @@ def draw_img(display_image):
     raw_key = cv2.waitKey(100)
     return raw_key
 
-def main():
+def main(args):
     global resize_output, resize_output_width, resize_output_height
 
     Detector = detector(overlay)
@@ -217,7 +177,8 @@ def main():
     restart  = True
     buffsize = 3
     display_image=[None for i in range(0,buffsize)]
-    cam = video_source('PiCamera').start()
+    which_source = lambda x: 'UVC' if x else 'PiCamera'
+    cam = video_source(which_source(args.uvc)).start()
 
     cv2.namedWindow(cv_window_name)
     cv2.moveWindow(cv_window_name, 10,  10)
@@ -273,13 +234,14 @@ if __name__ == "__main__":
 
     args = argparse.ArgumentParser()
     args.add_argument("--resize",       action="store_true",     help="resize video window")
-    args.add_argument("-w", "--width" , type=int, default=640,   help="video width")
-    args.add_argument("-t", "--height", type=int, default=480,   help="video height")
-    args.add_argument("-c", "--cam",    type=int, default=0,     help="camera index")
+    args.add_argument("-w", "--width" ,  type=int, default=640,  help="video width")
+    args.add_argument("-t", "--height",  type=int, default=480,  help="video height")
+    grps = args.add_mutually_exclusive_group()
+    grps.add_argument("-u", "--uvc",     action="store_true",    help="Use UVC")
     args = args.parse_args()
     if args.resize: resize_output=True
     resize_output_width = args.width
     resize_output_height= args.height
 
-    sys.exit(main())
+    sys.exit(main(args))
 
