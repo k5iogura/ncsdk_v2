@@ -11,12 +11,12 @@
 ![](files/ncsx4-usbhub-virtical.jpg)
 ![](files/cvpr2017_11_ncsx4+usbhub.jpg)
 ![](files/movidius-ncsx4-usbub.jpg)
-### **Movidius Neural Compute Sticks**
+### **Movidius Neural Compute Sticks**  
 Fathom  
 ![](files/fathom.png)
-Myriad X  
+Myriad X    
 ![](files/Intel-Movidius-Myriad-X-2.jpg)
-### **Drone**
+### **Drone**  
 ![](files/drone.png)
 ### **High Power Use**
 ![](files/ncsx4-PCIe.jpg)
