@@ -1,17 +1,39 @@
-import cv2
-import numpy as np
+# import the necessary packages
+from picamera.array import PiRGBArray
+from picamera import PiCamera
 import time
-
-cam=cv2.VideoCapture("1mb.mp4")
-
-cv2.namedWindow("video")
-
-while(1):
-    start = time.time()
-    (ret, img) = cam.read()
-    if ret==False:
+import cv2
+ 
+# initialize the camera and grab a reference to the raw camera capture
+camera = PiCamera()
+camera.resolution = (320, 240)
+camera.framerate = 32
+rawCapture = PiRGBArray(camera, size=(320, 240))
+ 
+# allow the camera to warmup
+time.sleep(0.1)
+ 
+count = 0
+# capture frames from the camera
+for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
+    # grab the raw NumPy array representing the image, then initialize the timestamp
+    # and occupied/unoccupied text
+    t1 = time.time()
+    image = frame.array
+ 
+    # show the frame
+    cv2.imshow("Frame", image)
+    key = cv2.waitKey(100) & 0xFF
+ 
+    # clear the stream in preparation for the next frame
+    rawCapture.truncate(0)
+ 
+    # if the `q` key was pressed, break from the loop
+    if key == ord("q"):
         break
-    cv2.imshow("video",img)
-    cv2.waitKey(5)
-    end   = time.time()
-    print('%5.3f\b\b\b\b\b'%(1./(end-start)))
+    count += 1
+    t2 = time.time()
+    if count >= 33:
+        fps = count / ( t2 - t1 )
+        print("%.3f %d / %.6f"%(fps,count,(t2-t1)))
+        count = 0
