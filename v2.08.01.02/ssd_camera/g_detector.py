@@ -11,10 +11,10 @@ class detector:
     max_device = 10
     deviceEmpy = [ 1 for i in range(0, 10) ]
     deviceInfo = True
+    output = None
     def __init__(self, callback_func, graph_filename="graph"):
         self.deviceNo  = -1
         self.initiated = False
-        self.output    = None
         self.callback  = callback_func
         self.preproc   = None
         self.postproc  = None
@@ -93,11 +93,11 @@ class detector:
             if image_source is not None:
                 copy_image = image_source.copy()
                 self.callback(copy_image, output)
-            self.output = output
+            detector.output = output
             self.initiated = False
         elif image_source is not None:
             copy_image = image_source.copy()
-            self.callback(copy_image, self.output)
+            self.callback(copy_image, detector.output)
 
         # copy_image may be None, prevent accident in your postproc
         if self.postproc is not None:
