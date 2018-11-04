@@ -123,7 +123,7 @@ if __name__ == "__main__":
 
     args = argparse.ArgumentParser()
     args.add_argument("-w", "--width" ,  type=int, default=640,  help="video width")
-    args.add_argument("-t", "--height",  type=int, default=480,  help="video height")
+    args.add_argument("-h", "--height",  type=int, default=480,  help="video height")
     args.add_argument("-r", "--resize",  action="store_true",    help="resize window")
     args.add_argument("-u", "--uvc",     action="store_true",    help="Use UVC")
     args.add_argument("-N", "--Nset",    type=int, default=10,   help="limit of Using Nset def=10")
