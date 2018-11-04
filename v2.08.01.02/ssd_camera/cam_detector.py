@@ -57,11 +57,11 @@ def preprocess_image(source_image):
     return resized_image
 
 # handles key presses by adjusting global thresholds etc.
-# raw_key is the return value from cv2.waitkey
+# key is the return value from cv2.waitkey
 # returns False if program should end, or True if should continue
-def handle_keys(raw_key):
+def decode_key(key):
     global min_score_percent
-    ascii_code = raw_key & 0xFF
+    ascii_code = key & 0xFF
     if ((ascii_code == ord('q')) or (ascii_code == ord('Q'))):
         return False
     elif (ascii_code == ord('B')):
@@ -163,9 +163,9 @@ def draw_img(display_image):
                                    (resize_output_width, resize_output_height),
                                    cv2.INTER_LINEAR)
     cv2.imshow(cv_window_name, display_image)
-    #raw_key = cv2.waitKey(1)
-    raw_key = cv2.waitKey(100)
-    return raw_key
+    #key = cv2.waitKey(1)
+    key = cv2.waitKey(100)
+    return key
 
 def main(args):
     global resize_output, resize_output_width, resize_output_height
@@ -176,7 +176,6 @@ def main(args):
     exit_app = False
     restart  = True
     buffsize = 3
-    display_image=[None for i in range(0,buffsize)]
     which_source = lambda x: 'UVC' if x else 'PiCamera'
     cam = video_source(which_source(args.uvc)).start()
 
@@ -187,6 +186,7 @@ def main(args):
     Detector.initiate(img)
     playback_count = predicts_count = 0
     playback_per_second = predicts_per_second = 0
+    display_image=[None for i in range(0,buffsize)]
     start_time = time.perf_counter()
     while(True):
         for i in range(0, buffsize):
@@ -194,9 +194,9 @@ def main(args):
                 display_image[i] = cam.read()
                 if i >= 0: image_overlapped = Detector.finish(display_image[i])
                 if i == 0: Detector.initiate(display_image[i])
-                raw_key = draw_img(image_overlapped)
-                if (raw_key != -1):
-                    if (handle_keys(raw_key) == False):
+                key = draw_img(image_overlapped)
+                if (key != -1):
+                    if (decode_key(key) == False):
                         Detector.finish(None)
                         exit_app = True
                         break
@@ -233,11 +233,10 @@ def main(args):
 if __name__ == "__main__":
 
     args = argparse.ArgumentParser()
-    args.add_argument("--resize",       action="store_true",     help="resize video window")
     args.add_argument("-w", "--width" ,  type=int, default=640,  help="video width")
     args.add_argument("-t", "--height",  type=int, default=480,  help="video height")
-    grps = args.add_mutually_exclusive_group()
-    grps.add_argument("-u", "--uvc",     action="store_true",    help="Use UVC")
+    args.add_argument("-r", "--resize",  action="store_true",    help="resize window")
+    args.add_argument("-u", "--uvc",     action="store_true",    help="Use UVC")
     args = args.parse_args()
     if args.resize: resize_output=True
     resize_output_width = args.width
