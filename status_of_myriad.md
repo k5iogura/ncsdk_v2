@@ -1,5 +1,5 @@
 # Status movidius now
-
+Nov.04.2018  from google
 ### **Use Case from Movidius HP**  
 ![](files/ncs_workflow.jpg)
 ### **With Raspberry Pi ModelB**
