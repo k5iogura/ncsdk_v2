@@ -8,7 +8,11 @@ import numpy
 class detector:
     # graph_filename is graph binary file made by mvNCCompile
     # callback_func is called with image and result
+    max_device = 10
+    deviceNo   = 0
+    deviceEmpy = [ 1 for i in range(0, max_device) ]
     def __init__(self, callback_func, graph_filename="graph"):
+        self.deviceNo  = 0
         self.initiated = False
         self.output    = None
         self.callback  = callback_func
@@ -30,15 +34,22 @@ class detector:
             mvnc.LogLevel.FATAL
         )
 
+        for d_idx in range(0,detector.max_device):
+            if detector.deviceEmpy[d_idx] == 1:
+                detector.deviceEmpy[d_idx] = 0
+                detector.deviceNo = d_idx
+                print("Using device %d"%(detector.deviceNo))
+                break
+
         try:
-            self.device = mvnc.Device(self.devices[0])
+            self.device = mvnc.Device(self.devices[detector.deviceNo])
 
             self.device.open()
 
             with open(graph_filename, mode='rb') as f:
                 self.graph_data = f.read()
 
-            self.graph_obj = mvnc.Graph('graph1')
+            self.graph_obj = mvnc.Graph('graph'+str(detector.deviceNo))
 
             self.fifo_in, self.fifo_out = self.graph_obj.allocate_with_fifos(
                 self.device,
