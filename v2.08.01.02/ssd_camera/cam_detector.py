@@ -59,7 +59,7 @@ def main(args):
 
     Detector = [ None for i in range(0,buffsize) ]
     for i in range(0,buffsize):
-        Detector[i] = detector(callback_func=overlay)
+        Detector[i] = detector(callback_func=overlay,used_limit=args.Nset)
         Detector[i].set_preproc(preprocess_image)
 
     exit_app = False
@@ -129,6 +129,7 @@ if __name__ == "__main__":
     args.add_argument("-t", "--height",  type=int, default=480,  help="video height")
     args.add_argument("-r", "--resize",  action="store_true",    help="resize window")
     args.add_argument("-u", "--uvc",     action="store_true",    help="Use UVC")
+    args.add_argument("-N", "--Nset",    type=int, default=10,   help="limit of Using Nset def=10")
     args = args.parse_args()
     if args.resize: resize_output=True
     resize_output_width = args.width

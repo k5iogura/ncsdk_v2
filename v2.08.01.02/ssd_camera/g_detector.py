@@ -8,12 +8,11 @@ import numpy
 class detector:
     # graph_filename is graph binary file made by mvNCCompile
     # callback_func is called with image and result
-    max_device = 10
     deviceEmpy = [ 1 for i in range(0, 10) ]
     deviceInfo = True
     output = None
     frames = 0
-    def __init__(self, callback_func, graph_filename="graph"):
+    def __init__(self, callback_func, graph_filename="graph", used_limit=10):
         self.deviceNo  = -1
         self.initiated = False
         self.callback  = callback_func
@@ -28,7 +27,7 @@ class detector:
             detector.deviceInfo = False
 
         self.devices = mvnc.enumerate_devices()
-        detector.num_device = len(self.devices)
+        detector.num_device = min(len(self.devices), abs(used_limit))
 
         for d_idx in range(0, detector.num_device):
             if detector.deviceEmpy[d_idx] == 1:
