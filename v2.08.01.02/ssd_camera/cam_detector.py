@@ -104,9 +104,6 @@ def main(args):
             sys.stdout.write('\b'*20)
             sys.stdout.write("%8.3f/%8.3fFPS"%(predicts_per_second, playback_per_second))
             sys.stdout.flush()
-            start_time = time.perf_counter()
-            start_frames = Detector[0].frames
-            playback_count = predicts_count = 0
 
         if exit_app:
             break
