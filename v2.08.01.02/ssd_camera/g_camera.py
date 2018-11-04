@@ -6,7 +6,7 @@ class video_source:
 
         if  self.source_mode == 'PiCamera':
             from imutils.video import VideoStream
-            self.video_obj = VideoStream(usePiCamera=True).start()
+            self.video_obj = VideoStream(usePiCamera=True, resolution=(w,h)).start()
             time.sleep(1)   # warm up
             print("video_source : setup PiCamera")
         else:
