@@ -1,8 +1,6 @@
-#! /usr/bin/env python3
-
 # Copyright(c) 2018 Kenji.Ogura
-# License: MIT See LICENSE file in root directory.
-
+# License: Such as Unauthorized use is prohibited.
+# mailto : kenji.ogura@jcom.zaq.ne.jp
 
 from mvnc import mvncapi as mvnc
 import numpy

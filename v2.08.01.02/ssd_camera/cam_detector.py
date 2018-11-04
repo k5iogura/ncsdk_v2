@@ -1,8 +1,6 @@
-#! /usr/bin/env python3
-
-# Copyright(c) 2017 Intel Corporation. 
-# License: MIT See LICENSE file in root directory.
-
+# Copyright(c) 2018 Kenji.Ogura
+# License: Such as Unauthorized use is prohibited.
+# mailto : kenji.ogura@jcom.zaq.ne.jp
 
 from mvnc import mvncapi as mvnc
 import sys
@@ -14,147 +12,24 @@ import os
 import argparse
 import sys
 from sys import argv
-#import video_processor
-#import queue
 from g_detector import *
 from g_camera   import *
+from video_objects import *
 
-# name of the opencv window
-cv_window_name = "SSD Mobilenet"
-
-# labels AKA classes.  The class IDs returned
-# are the indices into this list
-labels = ('background',
-          'aeroplane', 'bicycle', 'bird', 'boat',
-          'bottle', 'bus', 'car', 'cat', 'chair',
-          'cow', 'diningtable', 'dog', 'horse',
-          'motorbike', 'person', 'pottedplant',
-          'sheep', 'sofa', 'train', 'tvmonitor')
-
-# the ssd mobilenet image width and height
-NETWORK_IMAGE_WIDTH = 300
-NETWORK_IMAGE_HEIGHT = 300
-
-# the minimal score for a box to be shown
-min_score_percent = 60
-
-# the resize_window arg will modify these if its specified on the commandline
-resize_output = False
-resize_output_width = 0
-resize_output_height = 0
-
-# read video files from this directory
-input_video_path = '.'
-
-# create a preprocessed image from the source image that complies to the
-# network expectations and return it
-def preprocess_image(source_image):
-    resized_image = cv2.resize(source_image, (NETWORK_IMAGE_WIDTH, NETWORK_IMAGE_HEIGHT))
-    
-    # trasnform values from range 0-255 to range -1.0 - 1.0
-    resized_image = resized_image - 127.5
-    resized_image = resized_image * 0.007843
-    return resized_image
-
-# handles key presses by adjusting global thresholds etc.
-# key is the return value from cv2.waitkey
-# returns False if program should end, or True if should continue
-def decode_key(key):
-    global min_score_percent
-    ascii_code = key & 0xFF
-    if ((ascii_code == ord('q')) or (ascii_code == ord('Q'))):
-        return False
-    elif (ascii_code == ord('B')):
-        min_score_percent += 5
-        print('New minimum box percentage: ' + str(min_score_percent) + '%')
-    elif (ascii_code == ord('b')):
-        min_score_percent -= 5
-        print('New minimum box percentage: ' + str(min_score_percent) + '%')
-
-    return True
-
-
-# overlays the boxes and labels onto the display image.
-# display_image is the image on which to overlay the boxes/labels
-# object_info is a list of 7 values as returned from the network
-#     These 7 values describe the object found and they are:
-#         0: image_id (always 0 for myriad)
-#         1: class_id (this is an index into labels)
-#         2: score (this is the probability for the class)
-#         3: box left location within image as number between 0.0 and 1.0
-#         4: box top location within image as number between 0.0 and 1.0
-#         5: box right location within image as number between 0.0 and 1.0
-#         6: box bottom location within image as number between 0.0 and 1.0
-# returns None
-def overlay_on_image(display_image, object_info):
-    source_image_width = display_image.shape[1]
-    source_image_height = display_image.shape[0]
-
-    base_index = 0
-    class_id = object_info[base_index + 1]
-    percentage = int(object_info[base_index + 2] * 100)
-    if (percentage <= min_score_percent):
-        return
-
-    label_text = labels[int(class_id)] + " (" + str(percentage) + "%)"
-    box_left = int(object_info[base_index + 3] * source_image_width)
-    box_top = int(object_info[base_index + 4] * source_image_height)
-    box_right = int(object_info[base_index + 5] * source_image_width)
-    box_bottom = int(object_info[base_index + 6] * source_image_height)
-
-    box_color = (255, 128, 0)  # box color
-    box_thickness = 2
-    cv2.rectangle(display_image, (box_left, box_top), (box_right, box_bottom), box_color, box_thickness)
-
-    scale_max = (100.0 - min_score_percent)
-    scaled_prob = (percentage - min_score_percent)
-    scale = scaled_prob / scale_max
-
-    # draw the classification label string just above and to the left of the rectangle
-    #label_background_color = (70, 120, 70)  # greyish green background for text
-    label_background_color = (0, int(scale * 175), 75)
-    label_text_color = (255, 255, 255)  # white text
-
-    label_size = cv2.getTextSize(label_text, cv2.FONT_HERSHEY_SIMPLEX, 0.5, 1)[0]
-    label_left = box_left
-    label_top = box_top - label_size[1]
-    if (label_top < 1):
-        label_top = 1
-    label_right = label_left + label_size[0]
-    label_bottom = label_top + label_size[1]
-    cv2.rectangle(display_image, (label_left - 1, label_top - 1), (label_right + 1, label_bottom + 1),
-                  label_background_color, -1)
-
-    # label text above the box
-    cv2.putText(display_image, label_text, (label_left, label_bottom), cv2.FONT_HERSHEY_SIMPLEX, 0.5, label_text_color, 1)
-
-    # display text to let user know how to quit
-    cv2.rectangle(display_image,(0, 0),(100, 15), (128, 128, 128), -1)
-    cv2.putText(display_image, "Q to Quit", (10, 12), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 0, 0), 1)
-
-def overlay(image_to_classify, output):
-    # number of boxes returned
-    num_valid_boxes = int(output[0])
-
-    for box_index in range(num_valid_boxes):
-            base_index = 7+ box_index * 7
-            if (not numpy.isfinite(output[base_index]) or
-                    not numpy.isfinite(output[base_index + 1]) or
-                    not numpy.isfinite(output[base_index + 2]) or
-                    not numpy.isfinite(output[base_index + 3]) or
-                    not numpy.isfinite(output[base_index + 4]) or
-                    not numpy.isfinite(output[base_index + 5]) or
-                    not numpy.isfinite(output[base_index + 6])):
-                # boxes with non finite (inf, nan, etc) numbers must be ignored
+def overlay(source_image, result):
+    for ibox in range(int(result[0])):
+            offset_box = (ibox + 1) * 7
+            if (
+                    not numpy.isfinite(result[offset_box + 0]) or
+                    not numpy.isfinite(result[offset_box + 1]) or
+                    not numpy.isfinite(result[offset_box + 2]) or
+                    not numpy.isfinite(result[offset_box + 3]) or
+                    not numpy.isfinite(result[offset_box + 4]) or
+                    not numpy.isfinite(result[offset_box + 5]) or
+                    not numpy.isfinite(result[offset_box + 6])
+                ):
                 continue
-
-            x1 = max(int(output[base_index + 3] * image_to_classify.shape[0]), 0)
-            y1 = max(int(output[base_index + 4] * image_to_classify.shape[1]), 0)
-            x2 = min(int(output[base_index + 5] * image_to_classify.shape[0]), image_to_classify.shape[0]-1)
-            y2 = min((output[base_index + 6] * image_to_classify.shape[1]), image_to_classify.shape[1]-1)
-
-            # overlay boxes and labels on to the image
-            overlay_on_image(image_to_classify, output[base_index:base_index + 7])
+            overlay_on_image(source_image, result[offset_box:offset_box + 7])
 
 def draw_img(display_image):
     global resize_output, resize_output_width, resize_output_height
@@ -163,7 +38,6 @@ def draw_img(display_image):
                                    (resize_output_width, resize_output_height),
                                    cv2.INTER_LINEAR)
     cv2.imshow(cv_window_name, display_image)
-    #key = cv2.waitKey(1)
     key = cv2.waitKey(100)
     return key
 
@@ -229,7 +103,6 @@ def main(args):
         sys.exit(1)
     print("\nfinalizing OK playback: %.2fFPS predict: %.2fFPS"%(playback_per_second, predicts_per_second))
 
-# main entry point for program. we'll call main() to do what needs to be done.
 if __name__ == "__main__":
 
     args = argparse.ArgumentParser()

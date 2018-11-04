@@ -1,3 +1,7 @@
+# Copyright(c) 2018 Kenji.Ogura
+# License: Such as Unauthorized use is prohibited.
+# mailto : kenji.ogura@jcom.zaq.ne.jp
+
 import time
 
 class video_source:
