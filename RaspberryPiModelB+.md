@@ -128,3 +128,5 @@ On RaspberryPI run basic camera python script,
 $ export DISPLAY=192.168.11.10:0
 $ python3 first_contact/cam.py
 ```
+
+## [Using PiCamera via picamera module here](RaspberryPi_CSI.md)
