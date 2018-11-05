@@ -17,6 +17,11 @@ from g_camera   import *
 from video_objects import *
 
 def overlay(source_image, result):
+
+    if result is None:
+        draw_img(source_image)
+        return
+
     for ibox in range(int(result[0])):
             offset_box = (ibox + 1) * 7
             if (
@@ -41,23 +46,33 @@ def draw_img(display_image):
     key = cv2.waitKey(100)
     return key
 
+def decode_key(key):
+    ascii_code = key & 0xFF
+    if ascii_code == ord('q'):
+        return False
+    return True
+
 def main(args):
     global resize_output, resize_output_width, resize_output_height
 
-    Detector = detector(overlay)
-    Detector.set_preproc(preprocess_image)
+    buffsize = 3
+
+    Detector = [ None for i in range(0,buffsize) ]
+    for i in range(0,buffsize):
+        Detector[i] = detector(callback_func=overlay)
+        Detector[i].set_preproc(preprocess_image)
 
     exit_app = False
-    restart  = True
-    buffsize = 3
     which_source = lambda x: 'UVC' if x else 'PiCamera'
     cam = video_source(which_source(args.uvc)).start()
 
     cv2.namedWindow(cv_window_name)
     cv2.moveWindow(cv_window_name, 10,  10)
 
-    img = cam.read()
-    Detector.initiate(img)
+    for i in range(0,buffsize):
+        img = cam.read()
+        Detector[i].initiate(img)
+
     playback_count = predicts_count = 0
     playback_per_second = predicts_per_second = 0
     display_image=[None for i in range(0,buffsize)]
@@ -66,12 +81,12 @@ def main(args):
         for i in range(0, buffsize):
             try:
                 display_image[i] = cam.read()
-                if i >= 0: image_overlapped = Detector.finish(display_image[i])
-                if i == 0: Detector.initiate(display_image[i])
+                image_overlapped = Detector[i].finish(display_image[i])
+                Detector[i].initiate(display_image[i])
                 key = draw_img(image_overlapped)
                 if (key != -1):
                     if (decode_key(key) == False):
-                        Detector.finish(None)
+                        Detector[i].finish(None)
                         exit_app = True
                         break
                 playback_count += 1
@@ -95,7 +110,8 @@ def main(args):
 
     # Clean up the graph and the device
     try:
-        Detector.close()
+        for i in range(0, buffsize):
+            Detector[i].close()
         cam.release()
         cv2.destroyAllWindows()
     except Exception as e:

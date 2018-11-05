@@ -9,8 +9,9 @@ class detector:
     # graph_filename is graph binary file made by mvNCCompile
     # callback_func is called with image and result
     max_device = 10
-    deviceNo   = 0
-    deviceEmpy = [ 1 for i in range(0, max_device) ]
+    deviceNo   = -1
+    deviceEmpy = [ 1 for i in range(0, 10) ]
+    deviceInfo = True
     def __init__(self, callback_func, graph_filename="graph"):
         self.deviceNo  = 0
         self.initiated = False
@@ -19,27 +20,28 @@ class detector:
         self.preproc   = None
         self.postproc  = None
 
-        mvnc.global_set_option(
-            mvnc.GlobalOption.RW_LOG_LEVEL,
-            mvnc.LogLevel.DEBUG
-        )
+        if detector.deviceInfo:
+            mvnc.global_set_option(
+                mvnc.GlobalOption.RW_LOG_LEVEL,
+                mvnc.LogLevel.DEBUG
+            )
+            detector.deviceInfo = False
 
         self.devices = mvnc.enumerate_devices()
-        if len(self.devices) == 0:
-            print('No devices')
-            quit()
+        detector.num_device = len(self.devices)
 
-        mvnc.global_set_option(
-            mvnc.GlobalOption.RW_LOG_LEVEL,
-            mvnc.LogLevel.FATAL
-        )
-
-        for d_idx in range(0,detector.max_device):
+        for d_idx in range(0, detector.num_device):
             if detector.deviceEmpy[d_idx] == 1:
                 detector.deviceEmpy[d_idx] = 0
                 detector.deviceNo = d_idx
                 print("Using device %d"%(detector.deviceNo))
                 break
+        if detector.deviceNo < 0: return
+
+        mvnc.global_set_option(
+            mvnc.GlobalOption.RW_LOG_LEVEL,
+            mvnc.LogLevel.FATAL
+        )
 
         try:
             self.device = mvnc.Device(self.devices[detector.deviceNo])
@@ -70,6 +72,8 @@ class detector:
 
     # kick NCS
     def initiate(self, image_source):
+        if detector.deviceNo < 0: return
+
         self.initiated = True
 
         if self.preproc is not None:
@@ -104,6 +108,7 @@ class detector:
 
     # Clean up the graph and the device
     def close(self):
+        if detector.deviceNo < 0: return
         self.fifo_in.destroy()
         self.fifo_out.destroy()
         self.graph_obj.destroy()
