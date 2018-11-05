@@ -35,6 +35,7 @@ class VSX:
                 sys.stdout.flush()
         self.vs.stop()
         cv2.destroyAllWindows()
+        return self
 
     def stop(self):
         self.vs.stop()
