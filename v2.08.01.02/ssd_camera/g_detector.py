@@ -9,11 +9,10 @@ class detector:
     # graph_filename is graph binary file made by mvNCCompile
     # callback_func is called with image and result
     max_device = 10
-    deviceNo   = -1
     deviceEmpy = [ 1 for i in range(0, 10) ]
     deviceInfo = True
     def __init__(self, callback_func, graph_filename="graph"):
-        self.deviceNo  = 0
+        self.deviceNo  = -1
         self.initiated = False
         self.output    = None
         self.callback  = callback_func
@@ -33,10 +32,10 @@ class detector:
         for d_idx in range(0, detector.num_device):
             if detector.deviceEmpy[d_idx] == 1:
                 detector.deviceEmpy[d_idx] = 0
-                detector.deviceNo = d_idx
-                print("Using device %d"%(detector.deviceNo))
+                self.deviceNo = d_idx
+                print("Using device %d"%(self.deviceNo))
                 break
-        if detector.deviceNo < 0: return
+        if self.deviceNo < 0: return
 
         mvnc.global_set_option(
             mvnc.GlobalOption.RW_LOG_LEVEL,
@@ -44,14 +43,14 @@ class detector:
         )
 
         try:
-            self.device = mvnc.Device(self.devices[detector.deviceNo])
+            self.device = mvnc.Device(self.devices[self.deviceNo])
 
             self.device.open()
 
             with open(graph_filename, mode='rb') as f:
                 self.graph_data = f.read()
 
-            self.graph_obj = mvnc.Graph('graph'+str(detector.deviceNo))
+            self.graph_obj = mvnc.Graph('graph'+str(self.deviceNo))
 
             self.fifo_in, self.fifo_out = self.graph_obj.allocate_with_fifos(
                 self.device,
@@ -72,7 +71,7 @@ class detector:
 
     # kick NCS
     def initiate(self, image_source):
-        if detector.deviceNo < 0: return
+        if self.deviceNo < 0: return
 
         self.initiated = True
 
@@ -108,7 +107,7 @@ class detector:
 
     # Clean up the graph and the device
     def close(self):
-        if detector.deviceNo < 0: return
+        if self.deviceNo < 0: return
         self.fifo_in.destroy()
         self.fifo_out.destroy()
         self.graph_obj.destroy()
