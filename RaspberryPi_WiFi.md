@@ -51,9 +51,13 @@ Created symlink /etc/systemd/system/multi-user.target.wants/wpa_supplicant@wlan0
 ```
 Look at login message, message don't show "Wi-Fi is disable".  
 
-- **Create /etc/wpa_supplicant-wlan0.conf as WEP Access Point**  
+- **Create /etc/wpa_supplicant-wlan0.conf as WEP Client**   
 **At next** create file including network setup, essid, passphrase.  
-This sample is for WEP AP.  WEP passphrase is set as wep_key0=.
+This sample is for WEP AP.  WEP passphrase is set plain text as wep_key0=.  
+If you use WPA-PSK then create passphrase by bellow,
+```
+# wpa_supplicant <ESSID> <PLAIN TEXT PASSWORD> >>/etc/wpa_supplicant/wpa_supplicant-wlan0.conf
+```
 ```
 // create wpa_supplicant-wlan0.conf as WEP access
 # vi /etc/wpa_supplicat/wpa_supplicant-wlan0.conf
@@ -61,10 +65,21 @@ This sample is for WEP AP.  WEP passphrase is set as wep_key0=.
 country=JP
 ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
 update_config=1
+// Case of WEP
 network={
     ssid="************"
     key_mgmt=NONE
     wep_key0="******"
+}
+// Case of WPA2-PSK
+network={
+    ssid="************"
+    scan_ssid=1       // if stelse 1 else 0
+    key_mgmt=WPA-PSK
+    pairwise=CCMP     // mean AES
+    group=CCMP        // mean AES
+    auth_alg=OPEN     // magic word
+    psk=****make this by wpa_passphrase <ESSID> <WORD> command*****
 }
 # reboot
 ```
