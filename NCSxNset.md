@@ -36,7 +36,7 @@ Video Playback is skipped. Only pararell prediction result bellow.
 
 |Nset|Pred|Playback|PiCamera Size|X-Window|
 |-:|  -:|  -:|       -:|:-:|
-| 1| 6.5|19.8|  320x240| - |
+| 1| 6.6|19.8|  320x240| - |
 | 2|12.6|18.9|  320x240| - |
 | 1| 6.8|20.4|  640x480| - |
 | 2|12.5|18.7|  640x480| - |
