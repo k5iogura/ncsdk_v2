@@ -11,7 +11,7 @@
 **Abstruction of Pararell Behavier of 2set NCS**
 
 |NCS|Finish|Initiate|Finish|Initiate|Finish|Initiate|Finish|Initiate|...|
-|-:|-:|-:|-:|-:|-:|:-:|
+|-:|-:|-:|-:|-:|-:|-:|-:|-:|:-:|
 |1|O|O|-|-|O|O|-|-|...|
 |2|-|-|O|O|-|-|O|O|...|
 
