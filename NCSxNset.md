@@ -15,10 +15,12 @@
 |1|O|O|-|-|O|O|-|-|...|
 |2|-|-|O|O|-|-|O|O|...|
 
-**O:Operation of Finish or Initiate for NCS  
+***
+O:Operation of Finish or Initiate for NCS  
 -: Target NCS is Busy  
 Finish Operation : read_elem()  
-Initiate Operation: queue_inference_with_fifo_elm()**  
+Initiate Operation: queue_inference_with_fifo_elm()  
+***  
 
 **FPS With Video Rendering By OpenCV**
 
