@@ -10,12 +10,13 @@
 
 ***
 **Abstruction of Pararell Behavier of 2set NCS**  
-________________________________________________________________________\ Time
 
 |NCS|Finish|Initiate|Finish|Initiate|Finish|Initiate|Finish|Initiate|...|
-|-:|-:|-:|-:|-:|-:|-:|-:|-:|:-:|
+|-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
 |1|O|O|-|-|O|O|-|-|...|
 |2|-|-|O|O|-|-|O|O|...|
+
+________________________________________________________________________\ Time
 
 O:Operation of Finish or Initiate for NCS  
 -: Target NCS is Busy  
