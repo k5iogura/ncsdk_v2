@@ -16,6 +16,7 @@
 | 2| 7.8|11.7|  640x480|
 | 1| 4.1|12.5| 1280x720|
 | 2| 6.7|10.2| 1280x720|
+
 **Reference Notice**  
 *PiCamera Size* means args h/w values to picamera.videostream.__init__ contructor   
 
