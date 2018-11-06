@@ -10,6 +10,7 @@
 
 ***
 **Abstruction of Pararell Behavier of 2set NCS**  
+________________________________________________________________________\ Time
 
 |NCS|Finish|Initiate|Finish|Initiate|Finish|Initiate|Finish|Initiate|...|
 |-:|-:|-:|-:|-:|-:|-:|-:|-:|:-:|
