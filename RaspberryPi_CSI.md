@@ -164,6 +164,63 @@ $ python3 vs.py
 
 As same as previous sample given Nmsec is 100. By this parameter latency is verry short but frame rate is little such as 9.17FPS.  
 
+### Without imutils.FPS() by naive counting FPS
+imutils fps counting method is funny!  
+Usin naive method of counting FPS bellow,
+```
+import sys
+from imutils.video import VideoStream
+from imutils.video import FPS
+import  multiprocessing as mp
+import numpy
+import cv2
+import time
+
+class VSX:
+    def __init__(self, mpQ):
+        self.vs = VideoStream(usePiCamera=True, framerate=64, resolution=(640,480)).start()
+        time.sleep(1)
+        self.mpQ = mpQ
+        self.count = 0
+        self.started = time.perf_counter()
+
+    def start(self):
+        while True:
+            imgX = img = self.vs.read()
+            try:
+                if self.mpQ.full():
+                    self.mpQ.get()
+                self.mpQ.put(img)
+            except Exception as e:
+                print("exp: ",e.args)
+
+            cv2.imshow("Video", imgX)
+            if cv2.waitKey(1) != -1: break
+            self.count += 1
+            if self.count % 33 == 0:
+                self.end = time.perf_counter()
+                sys.stdout.write('\b'*24)
+                sys.stdout.write("%9.3fsec %7.3fFPS"%(self.end-self.started, self.count/(self.end-self.started)))
+                sys.stdout.flush()
+        self.vs.stop()
+        cv2.destroyAllWindows()
+
+    def stop(self):
+        self.vs.stop()
+        cv2.destroyAllWindows()
+
+if __name__=="__main__":
+
+    frameQ=mp.Queue(9)
+    vsx=VSX(frameQ).start()
+    vsx.stop()
+```
+|Resolution|FPS|
+|-:|-:|
+|380x240 | 100|
+|VGA     |  33|
+|1088x720|  15|
+
 ### Conclusion  
 **You can involve cv2 and picamera into your app together.**  
 
