@@ -46,6 +46,21 @@ Here, default ID/Password is **pi/raspberry**
 # pip3 install opencv-python opencv-contrib-python
 # apt get libusb-1.0-0 libusb-1.0-0-dev cmake
 ```
+***[Tips:ラズパイカメラを使って連続撮影＆fbiコマンドでCUI画面のフレームバッファに直接表示する方法。SSH経由でもOK！](https://iot-plus.net/make/raspi/raspistill-continuous-shooting-displays-on-cui-using-frame-buffer-with-ssh-connection/)***  
+Disable **Display Blank**  
+Fixing disable Display Blanking, some operation is needed,
+```
+# echo 0 > /sys/class/graphics/fb0/blank   # force display blank on
+# echo 1 > /sys/class/graphics/fb0/blank   # force display blank off
+```
+[Also may need bellow](https://www.geeks3d.com/hacklab/20160108/how-to-disable-the-blank-screen-on-raspberry-pi-raspbian/),
+```
+# vi /etc/lightdm/lightdm.conf
+[SeatDefaults]
+xserver-command=X -s 0 -dpms
+```
+and reboot!
+
 **Download NCSDK Version.2**
 ```
 // As installation under Home directory,,,
