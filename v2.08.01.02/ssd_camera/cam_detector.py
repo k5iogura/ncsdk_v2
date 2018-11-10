@@ -64,6 +64,9 @@ def main(args):
 
     exit_app = False
     which_source = lambda x: 'UVC' if x else 'PiCamera'
+    import multiprocessing as mp
+    mpQ = mp.Queue(33)
+    #cam = video_source(which_source(args.uvc),Queue=mpQ).start()
     cam = video_source(which_source(args.uvc)).start()
 
     cv2.namedWindow(cv_window_name)
@@ -71,6 +74,7 @@ def main(args):
 
     for i in range(0,buffsize):
         img = cam.read()
+        #img = mpQ.get()
         Detector[i].initiate(img)
 
     playback_count = predicts_count = 0
@@ -81,6 +85,7 @@ def main(args):
     while(True):
         for i in range(0, buffsize):
             try:
+                #display_image[i] = mpQ.get()
                 display_image[i] = cam.read()
                 image_overlapped = Detector[i].finish(display_image[i])
                 Detector[i].initiate(display_image[i])

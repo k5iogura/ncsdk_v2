@@ -9,7 +9,8 @@ import time
 class VSX:
     def __init__(self, mpQ):
         #self.vs = VideoStream(usePiCamera=True, framerate=64, resolution=(1088,720)).start()
-        self.vs = VideoStream(usePiCamera=True, framerate=64, resolution=(640,480)).start()
+        #self.vs = VideoStream(usePiCamera=True, framerate=64, resolution=(640,480)).start()
+        self.vs = VideoStream(usePiCamera=True, framerate=64, resolution=(320,240)).start()
         time.sleep(1)
         self.mpQ = mpQ
         self.count = 0
