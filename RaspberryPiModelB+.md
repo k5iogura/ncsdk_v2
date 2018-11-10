@@ -2,8 +2,8 @@
 
 # Setup NCS on RaspberryPI-3 Model B+
 
-# [RaspberryPI-3 WiFi Client setup here](RaspberryPI_WiFi.md)
-# [RaspberryPI-3 WiFi AP setup here](RaspberryPI_WiFiAP.md)
+# [RaspberryPI-3 WiFi Client setup here](RaspberryPi_WiFi.md)
+# [RaspberryPI-3 WiFi AP setup here](RaspberryPi_WiFiAP.md)
 # [Using PiCamera via picamera module here](RaspberryPi_CSI.md)
 
 ## Install NCSDK v2.08.01.02
