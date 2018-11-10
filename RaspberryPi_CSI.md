@@ -221,6 +221,8 @@ if __name__=="__main__":
 |VGA     |  33|
 |1088x720|  15|
 
+This is condition of DISPLAY=:0  
+
 ### Conclusion  
 **You can involve cv2 and picamera into your app together.**  
 

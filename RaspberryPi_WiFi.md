@@ -6,7 +6,7 @@
     RaspberryPI-3 with streach raspbian  
     Other PC can connect RaspberryPI-3 via ssh(need empty file **/boot/ssh**)  
     Wired router connect internet  
-    Wireless Access Point ESSID and Passphrase  
+    Check your targetting wireless Access Point's ESSID and Passphrase  
 
 - **Search RaspberryPI IP Address on other PC in your local network**  
     Connect RaspberryPI to your router via **Wired LAN**  
@@ -37,7 +37,7 @@ Found many AP near here:-) Select your known AP in the ESSID list.
 
 - **Start wpa_supplicant@wlan0.service via systemctl**  
 RaspberryPI-3 is controlling WiFi as **wpa_supplicant@wlan0.service**.  
-**At first** start wpa_supplicant@wlan.service to communicate raspi-config and services.  
+**At first** start wpa_supplicant@wlan0.service to communicate raspi-config and services.  
 ```
 $ sudo systemctl status wpa_supplicant@wlan0.service
 ● wpa_supplicant@wlan0.service - WPA supplicant daemon (interface-specific versi
@@ -106,7 +106,7 @@ wlan0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
         TX packets 32  bytes 5230 (5.1 KiB)
         TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
 ```
-wireless adaptor "wlan0" setup done. WiFi-AP deploys IP-Address to RaspberryPI-3 as DHCP server.  
+wireless adaptor "wlan0" setup done. Your target WiFi-AP deploys IP-Address(such as 192.168.11.19) to RaspberryPI-3 as DHCP server.  
 
 - **Check scanning RaspberryPI from Other PC in locak network**  
 ```
