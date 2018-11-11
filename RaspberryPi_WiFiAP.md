@@ -16,14 +16,17 @@ Also assumpt that WiFI Client has a network interface like wlan0.
 |       -:|         -:|        -:|                -:|            -:|
 |    wlan0| AP dnsmasq|   WiFi-AP|Other WiFi Clients|      10.0.0.4|
 
-# To do
+# Editing Files  
 ***
-- **Clean install raspbian stretch on RaspberryPi-3 B+**  
-- **Apt install dnsmasq and hostapd**  
 - **Edit /etc/dnsmasq.d/dnsmasq.conf**
 - **Edit /etc/hostapd/hostapd.conf**  
 - **Edit /etc/network/interface.d/home.conf**
+- **Edit /etc/default/hostapd**
 - **Edit /etc/dhcpcd.conf**  
+- **Edit /etc/sysctl.conf**
+- **echo 1 > /proc/sys/net/ipv4/ip_forward**  
+- **Create /etc/iptables.ipv4.nat**  
+- **Create /lib/dhcpcd/dhcpcd-hooks/70-ipv4-nat**  
 *** 
 
 ### Stop and make disable WiFi Client if RaspberryPi-3 was WiFi Client  
@@ -277,22 +280,36 @@ wlan0     IEEE 802.11  Mode:Master  Tx-Power=31 dBm
 
 ### Setup as WiFi router
 
+Forwarding On,
+
 ```
 # vi /etc/sysctl.conf
 net.ipv4.ip_forward=1
 # echo 1 > /proc/sys/net/ipv4/ip_forward
 ```
 
-```
-# vi /etc/network/interfaces
-pre-up iptables-restore < /etc/iptables.ipv4.nat
-```
+Set forwarding from wlan0 to eth0(=internet)
 
 ```
+//init filters
+# iptables -A INPUT -p icmp -j ACCEPT
+# iptables -A INPUT -i eth0 -j ACCEPT
+# iptables -P INPUT DROP
+# iptables -P FORWARD DROP
+# iptables -P OUTPUT ACCEPT
+//setup forwarding rule
 # iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 # iptables -A FORWARD -i eth0 -o wlan0 -m state --state RELATED,ESTABLISHED -j ACCEPT
 # iptables -A FORWARD -i wlan0 -o eth0 -j ACCEPT
 # iptables-save > /etc/iptables.ipv4.nat
+```
+
+Insert boot sequence,
+
+```
+# vi /lib/dhcpcd/dhcpcd-hooks/70-ipv4-nat
+iptables-restore < /etc/iptables.ipv4.nat
+ifconfig wlan0 10.0.0.1
 ```
 
 ### Check default gw
