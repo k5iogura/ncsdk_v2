@@ -16,6 +16,16 @@ Also assumpt that WiFI Client has a network interface like wlan0.
 |       -:|         -:|        -:|                -:|            -:|
 |    wlan0| AP dnsmasq|   WiFi-AP|Other WiFi Clients|      10.0.0.4|
 
+# To do
+***
+- **Clean install raspbian stretch on RaspberryPi-3 B+**  
+- **Apt install dnsmasq and hostapd**  
+- **Edit /etc/dnsmasq.d/dnsmasq.conf**
+- **Edit /etc/hostapd/hostapd.conf**  
+- **Edit /etc/network/interface.d/home.conf**
+- **Edit /etc/dhcpcd.conf**  
+*** 
+
 ### Stop and make disable WiFi Client if RaspberryPi-3 was WiFi Client  
 If RaspberryPi-3 was running **as WiFi Client then stop it** and diable WiFi Client.  
 ```
@@ -263,6 +273,26 @@ lo        no wireless extensions.
 wlan0     IEEE 802.11  Mode:Master  Tx-Power=31 dBm   
           Retry short limit:7   RTS thr:off   Fragment thr:off
           Power Management:on
+```
+
+### Setup as WiFi router
+
+```
+# vi /etc/sysctl.conf
+net.ipv4.ip_forward=1
+# echo 1 > /proc/sys/net/ipv4/ip_forward
+```
+
+```
+# vi /etc/network/interfaces
+pre-up iptables-restore < /etc/iptables.ipv4.nat
+```
+
+```
+# iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+# iptables -A FORWARD -i eth0 -o wlan0 -m state --state RELATED,ESTABLISHED -j ACCEPT
+# iptables -A FORWARD -i wlan0 -o eth0 -j ACCEPT
+# iptables-save > /etc/iptables.ipv4.nat
 ```
 
 ### Check default gw
