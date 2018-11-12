@@ -137,7 +137,7 @@ def mp_detector():
         deviceNo = 0
         Detector[deviceNo] = detector(used_limit=10)
         Detector[deviceNo].set_preproc(preprocess_image)
-        Detector[deviceNo].initiate(numpy.asarray(3*640*480).astype(numpy.float32).reshape(640,480,3))
+        Detector[deviceNo].initiate(numpy.zeros(3*640*480).astype(numpy.float32).reshape(640,480,3))
         res = Detector[deviceNo].fetch()
         Detector[deviceNo].close()
         print("mp_detector fin %d"%(res[0]))
