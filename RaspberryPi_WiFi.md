@@ -8,7 +8,7 @@
     Wired router connect internet  
     Check your targetting wireless Access Point's ESSID and Passphrase  
 
-- **Search RaspberryPI IP Address on other PC in your local network**  
+- **Search RaspberryPI IP Address through other PC in your local network**  
     Connect RaspberryPI to your router via **Wired LAN**  
     Use arp-scan command **on Other PC**  
 ```
