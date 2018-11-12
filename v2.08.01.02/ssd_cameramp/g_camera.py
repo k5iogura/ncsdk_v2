@@ -5,6 +5,39 @@
 import time
 import multiprocessing as mp
 
+# Import Original NCSDK modules
+from video_objects import *
+
+def overlay(source_image, result):
+
+    if result is None:
+        draw_img(source_image)
+        return
+
+    for ibox in range(int(result[0])):
+            offset_box = (ibox + 1) * 7
+            if (
+                    not numpy.isfinite(result[offset_box + 0]) or
+                    not numpy.isfinite(result[offset_box + 1]) or
+                    not numpy.isfinite(result[offset_box + 2]) or
+                    not numpy.isfinite(result[offset_box + 3]) or
+                    not numpy.isfinite(result[offset_box + 4]) or
+                    not numpy.isfinite(result[offset_box + 5]) or
+                    not numpy.isfinite(result[offset_box + 6])
+                ):
+                continue
+            overlay_on_image(source_image, result[offset_box:offset_box + 7])
+
+def draw_img(display_image):
+    global resize_output, resize_output_width, resize_output_height
+    if (resize_output):
+        display_image = cv2.resize(display_image,
+                                   (resize_output_width, resize_output_height),
+                                   cv2.INTER_LINEAR)
+    cv2.imshow(cv_window_name, display_image)
+    key = cv2.waitKey(1)
+    return key
+
 class video_source:
     def __init__(self,source_mode='UVC', videoDev=0, fps=30 ,w=320, h=240):
         self.source_mode = source_mode
@@ -47,13 +80,16 @@ class video_source:
             self.video_obj.stop()
 
 import cv2
-def mp_video_start(run_flag, e_time, e_frames, imgQ=None, rsltQ=None, fps=30, w=640, h=480):
-    source_mode='PiCamera'
+def mp_video_start(run_flag, e_frames, cam_mode, imgQ=None, rsltQ=None, fps=30, w=640, h=480):
+    if cam_mode == 1:
+        source_mode='PiCamera'
+    else:
+        source_mode='UVC'
     vs = video_source(source_mode, fps=fps, w=w, h=h).start()
     time.sleep(1)
     start =time.perf_counter()
     #e_frames.value = 0
-    print(run_flag.value,e_time.value,e_frames.value)
+    #print(run_flag.value,e_time.value,e_frames.value)
     latest_rslt = [ 0 ]
     while run_flag.value == 1:
 
@@ -74,10 +110,10 @@ def mp_video_start(run_flag, e_time, e_frames, imgQ=None, rsltQ=None, fps=30, w=
             if result is not None:
                 latest_rslt = result
 
+        overlay(img, latest_rslt)
         cv2.imshow('playback',img)
         if cv2.waitKey(1)!= -1:break
         e_frames.value+=1
-        e_time.value = time.perf_counter() - start
     vs.release()
     run_flag.value = 0
     print("\nfinish mp_video_start")

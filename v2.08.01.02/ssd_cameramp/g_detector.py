@@ -12,7 +12,7 @@ class detector:
     deviceInfo = True
     output = None
     frames = 0
-    def __init__(self, callback_func, graph_filename="graph", used_limit=10):
+    def __init__(self, callback_func=None, graph_filename="graph", used_limit=10):
         self.deviceNo  = -1
         self.initiated = False
         self.callback  = callback_func
@@ -87,6 +87,7 @@ class detector:
         )
     # fetch result of NCS
     def fetch(self):
+        output = None
         if self.initiated:
             output, _ = self.fifo_out.read_elem()
             self.initiated = False

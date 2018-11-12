@@ -16,37 +16,7 @@ from g_detector import *
 from g_camera   import *
 
 # Import Original NCSDK modules
-from video_objects import *
-
-def overlay(source_image, result):
-
-    if result is None:
-        draw_img(source_image)
-        return
-
-    for ibox in range(int(result[0])):
-            offset_box = (ibox + 1) * 7
-            if (
-                    not numpy.isfinite(result[offset_box + 0]) or
-                    not numpy.isfinite(result[offset_box + 1]) or
-                    not numpy.isfinite(result[offset_box + 2]) or
-                    not numpy.isfinite(result[offset_box + 3]) or
-                    not numpy.isfinite(result[offset_box + 4]) or
-                    not numpy.isfinite(result[offset_box + 5]) or
-                    not numpy.isfinite(result[offset_box + 6])
-                ):
-                continue
-            overlay_on_image(source_image, result[offset_box:offset_box + 7])
-
-def draw_img(display_image):
-    global resize_output, resize_output_width, resize_output_height
-    if (resize_output):
-        display_image = cv2.resize(display_image,
-                                   (resize_output_width, resize_output_height),
-                                   cv2.INTER_LINEAR)
-    cv2.imshow(cv_window_name, display_image)
-    key = cv2.waitKey(1)
-    return key
+#from video_objects import *
 
 def decode_key(key):
     ascii_code = key & 0xFF
@@ -139,35 +109,44 @@ if __name__ == "__main__":
     args.add_argument("-N", "--Nset",    type=int, default=10,   help="limit of Using Nset def=10")
     args = args.parse_args()
 
-    Detector = detector(callback_func=overlay, used_limit=args.Nset)
+    cam_mode = 1    # 1:MIPI Camera
+    if args.uvc: cam_mode=0
+
+    Detector = detector(used_limit=args.Nset)
     Detector.set_preproc(preprocess_image)
 
-    imgQ = mp.Queue(8)
-    rsltQ= mp.Queue(8)
+    imgQ     = mp.Queue(8)
+    rsltQ    = mp.Queue(8)
     run_flag = mp.Value('i',1)
-    e_time = mp.Value('f',0.1)
-    e_frame= mp.Value('i',0)
-    
+    e_frame  = mp.Value('i',0)
     p = mp.Process(
         target=mp_video_start,
-        args=(run_flag, e_time, e_frame, imgQ, rsltQ),
+        args=(run_flag, e_frame, cam_mode, imgQ, rsltQ),
         daemon=True)
     p.start()
 
-    result = [ 0 for i in range(0,7+7*2) ]
+    latest_result = [ 0 for i in range(0,7+7*2) ]
 
+    start = time.perf_counter()
     while True:
-        Detector.initiate(imgQ.get())
-        rsltQ.put(Detector.fetch())
-        if run_flag.value == 1:
-            time.sleep(0.5)
-            sys.stdout.write('\b'*14)
-            sys.stdout.write("%2d-%2d:%8.3f"%(imgQ.qsize(),rsltQ.qsize(),(e_frame.value/e_time.value)))
-            sys.stdout.flush()
-        else:
-            sys.stdout.write('\n')
-            break
+        try:
+            Detector.initiate(imgQ.get())
+            result = Detector.fetch()
+            if result is not None:
+                latest_result = result
+            rsltQ.put(latest_result)
 
+            if run_flag.value == 1:
+                if (e_frame.value%33)==0:
+                    e_time = time.perf_counter() - start
+                    sys.stdout.write('\b'*17)
+                    sys.stdout.write("%2d-%2d-%2d:%8.3f"%(latest_result[0],imgQ.qsize(),rsltQ.qsize(),(e_frame.value/e_time)))
+                    sys.stdout.flush()
+            else:
+                break
+        except : break
+
+    sys.stdout.write('\n')
     Detector.close()
     if args.resize: resize_output=True
     resize_output_width = args.width
