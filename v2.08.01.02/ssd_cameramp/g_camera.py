@@ -8,6 +8,12 @@ import multiprocessing as mp
 # Import Original NCSDK modules
 from video_objects import *
 
+def decode_key(key):
+    ascii_code = key & 0xFF
+    if ascii_code == ord('q'):
+        return False
+    return True
+
 def overlay(source_image, result):
 
     if result is None:
@@ -86,10 +92,9 @@ def mp_video_start(run_flag, e_frames, cam_mode, imgQ=None, rsltQ=None, fps=30, 
     else:
         source_mode='UVC'
     vs = video_source(source_mode, fps=fps, w=w, h=h).start()
-    time.sleep(1)
+    time.sleep(1)           # warm up
     start =time.perf_counter()
-    #e_frames.value = 0
-    #print(run_flag.value,e_time.value,e_frames.value)
+    e_frames.value = 0
     latest_rslt = [ 0 ]
     while run_flag.value == 1:
 
