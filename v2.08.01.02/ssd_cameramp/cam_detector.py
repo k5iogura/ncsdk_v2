@@ -71,7 +71,6 @@ if __name__ == "__main__":
 
             for deviceNo in range(0, num_device):
                 result = Detector[deviceNo].fetch()
-                result = None
                 if result is not None:
                     latest_result = result
                 if not args.perf1:
