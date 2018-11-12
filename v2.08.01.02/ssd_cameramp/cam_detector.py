@@ -41,7 +41,7 @@ if __name__ == "__main__":
     e_frame  = mp.Value('i',0)
     p = mp.Process(
         target=mp_video_start,
-        args=(run_flag, e_frame, cam_mode, imgQ, rsltQ),
+        args=(run_flag, e_frame, cam_mode, imgQ, rsltQ, 30, args.width, args.height),
         daemon=True)
     p.start()
 
