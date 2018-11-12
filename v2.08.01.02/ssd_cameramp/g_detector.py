@@ -4,7 +4,7 @@
 
 from mvnc import mvncapi as mvnc
 import numpy
-from video_object import *
+#from video_object import *
 
 class detector:
     # graph_filename is graph binary file made by mvNCCompile
@@ -37,7 +37,6 @@ class detector:
                 print("Using device %d"%(self.deviceNo))
                 break
         if self.deviceNo < 0:
-            print("No EmptyNCS")
             return
 
         mvnc.global_set_option(
@@ -76,7 +75,6 @@ class detector:
     def initiate(self, image_source):
         if self.deviceNo < 0: return
 
-        detector.frames += 1
         self.initiated = True
 
         if self.preproc is not None:
@@ -94,6 +92,7 @@ class detector:
         if self.initiated:
             output, _ = self.fifo_out.read_elem()
             self.initiated = False
+            detector.frames += 1
         return output
 
     # get result of NCS and call callback function with image and result

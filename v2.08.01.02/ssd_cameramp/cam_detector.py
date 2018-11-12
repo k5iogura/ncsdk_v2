@@ -25,6 +25,7 @@ if __name__ == "__main__":
     args.add_argument("-r", "--resize",  action="store_true",    help="resize window")
     args.add_argument("-u", "--uvc",     action="store_true",    help="Use UVC")
     args.add_argument("-N", "--Nset",    type=int, default=10,   help="limit of Using Nset def=10")
+    args.add_argument("-p1","--perf1",    action="store_true",    help="check performance")
     args = args.parse_args()
 
     cam_mode = 1    # 1:MIPI Camera
@@ -39,10 +40,18 @@ if __name__ == "__main__":
     rsltQ    = mp.Queue(33)
     run_flag = mp.Value('i',1)
     e_frame  = mp.Value('i',0)
-    p = mp.Process(
-        target=mp_video_start,
-        args=(run_flag, e_frame, cam_mode, imgQ, rsltQ, 30, args.width, args.height),
-        daemon=True)
+    if not args.perf1:
+        p = mp.Process(
+            target=mp_video_start,
+            args=(run_flag, e_frame, cam_mode, imgQ, rsltQ, 30, args.width, args.height),
+            daemon=True
+        )
+    else:
+        p = mp.Process(
+            target=mp_video_start,
+            args=(run_flag, e_frame, cam_mode, None, None, 30, args.width, args.height),
+            daemon=True
+        )
     p.start()
 
     latest_result = [ 0 for i in range(0,7+7*2) ]
@@ -50,16 +59,23 @@ if __name__ == "__main__":
     start = time.perf_counter()
     num_device = Detector[0].num_device
     count = 0
+    blank = numpy.zeros(3*640*480).astype(numpy.float32).reshape((640,480,3))
+    imgX  = [blank for i in range(num_device)]
     while True:
         try:
             for deviceNo in range(0, num_device):
-                Detector[deviceNo].initiate(imgQ.get())
+                if not args.perf1:
+                    Detector[deviceNo].initiate(imgQ.get())
+                else:
+                    Detector[deviceNo].initiate(imgX[deviceNo])
 
             for deviceNo in range(0, num_device):
                 result = Detector[deviceNo].fetch()
+                result = None
                 if result is not None:
                     latest_result = result
-                rsltQ.put(latest_result)
+                if not args.perf1:
+                    rsltQ.put(latest_result)
         except : pass
 
         if run_flag.value == 1:
