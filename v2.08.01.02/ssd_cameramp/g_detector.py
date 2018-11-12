@@ -4,6 +4,7 @@
 
 from mvnc import mvncapi as mvnc
 import numpy
+from video_object import *
 
 class detector:
     # graph_filename is graph binary file made by mvNCCompile
@@ -35,7 +36,9 @@ class detector:
                 self.deviceNo = d_idx
                 print("Using device %d"%(self.deviceNo))
                 break
-        if self.deviceNo < 0: return
+        if self.deviceNo < 0:
+            print("No EmptyNCS")
+            return
 
         mvnc.global_set_option(
             mvnc.GlobalOption.RW_LOG_LEVEL,
@@ -122,4 +125,24 @@ class detector:
         self.device.close()
         self.device.destroy()
         print("Detector closed")
+
+def mp_detector():
+    Detector = [ 0, 0 ]
+    try:
+        print("mp_detector go")
+        mvnc.global_set_option(
+            mvnc.GlobalOption.RW_LOG_LEVEL,
+            mvnc.LogLevel.DEBUG
+        )
+
+        deviceNo = 0
+        Detector[deviceNo] = detector(used_limit=10)
+        Detector[deviceNo].set_preproc(preprocess_image)
+        Detector[deviceNo].initiate(numpy.asarray(3*640*480).astype(numpy.float32).reshape(640,480,3))
+        res = Detector[deviceNo].fetch()
+        Detector[deviceNo].close()
+        print("mp_detector fin %d"%(res[0]))
+        while True: pass
+    except Exception as e:
+        print(e.args)
 
