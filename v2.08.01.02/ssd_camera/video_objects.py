@@ -98,6 +98,7 @@ def overlay_on_image(display_image, object_info):
     box_bottom = int(object_info[base_index + 6] * source_image_height)
 
     box_color = (255, 128, 0)  # box color
+    box_color = (0, 0, 255)  # box color modified
     box_thickness = 2
     cv2.rectangle(display_image, (box_left, box_top), (box_right, box_bottom), box_color, box_thickness)
 
@@ -108,6 +109,7 @@ def overlay_on_image(display_image, object_info):
     # draw the classification label string just above and to the left of the rectangle
     #label_background_color = (70, 120, 70)  # greyish green background for text
     label_background_color = (0, int(scale * 175), 75)
+    label_background_color = (0, 75, int(scale * 175))  # modified
     label_text_color = (255, 255, 255)  # white text
 
     label_size = cv2.getTextSize(label_text, cv2.FONT_HERSHEY_SIMPLEX, 0.5, 1)[0]
