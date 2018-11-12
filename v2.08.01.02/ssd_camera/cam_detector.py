@@ -64,9 +64,6 @@ def main(args):
 
     exit_app = False
     which_source = lambda x: 'UVC' if x else 'PiCamera'
-    import multiprocessing as mp
-    mpQ = mp.Queue(33)
-    #cam = video_source(which_source(args.uvc),Queue=mpQ).start()
     cam = video_source(which_source(args.uvc), w=args.width, h=args.height).start()
 
     cv2.namedWindow(cv_window_name)
@@ -74,7 +71,6 @@ def main(args):
 
     for i in range(0,buffsize):
         img = cam.read()
-        #img = mpQ.get()
         Detector[i].initiate(img)
 
     playback_count = predicts_count = 0
@@ -85,7 +81,6 @@ def main(args):
     while(True):
         for i in range(0, buffsize):
             try:
-                #display_image[i] = mpQ.get()
                 display_image[i] = cam.read()
                 image_overlapped = Detector[i].finish(display_image[i])
                 Detector[i].initiate(display_image[i])
@@ -101,17 +96,19 @@ def main(args):
                 print("Any Exception found:",e.args)
                 exit_app = True
                 break
-        if playback_count > 33:
-            end_time = time.perf_counter()
-            end_frames = Detector[0].frames
-            playback_per_second = playback_count / (end_time - start_time)
-            predicts_per_second = (end_frames - start_frames) / (end_time - start_time)
-            sys.stdout.write('\b'*20)
-            sys.stdout.write("%8.3f/%8.3fFPS"%(predicts_per_second, playback_per_second))
-            sys.stdout.flush()
+        try:
+            if (playback_count % 33) == 0:
+                end_time = time.perf_counter()
+                end_frames = Detector[0].frames
+                playback_per_second = playback_count / (end_time - start_time)
+                predicts_per_second = (end_frames - start_frames) / (end_time - start_time)
+                sys.stdout.write('\b'*20)
+                sys.stdout.write("%8.3f/%8.3fFPS"%(predicts_per_second, playback_per_second))
+                sys.stdout.flush()
 
-        if exit_app:
-            break
+            if exit_app:
+                break
+        except : break
 
     # Clean up the graph and the device
     try:
@@ -119,9 +116,7 @@ def main(args):
             Detector[i].close()
         cam.release()
         cv2.destroyAllWindows()
-    except Exception as e:
-        print("all finalizeing faild",e.args)
-        sys.exit(1)
+    except : pass
     print("\nfinalizing OK playback: %.2fFPS predict: %.2fFPS"%(playback_per_second, predicts_per_second))
 
 if __name__ == "__main__":
