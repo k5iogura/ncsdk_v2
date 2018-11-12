@@ -67,7 +67,7 @@ def main(args):
     cam = video_source(which_source(args.uvc), w=args.width, h=args.height).start()
 
     cv2.namedWindow(cv_window_name)
-    cv2.moveWindow(cv_window_name, 10,  10)
+    cv2.moveWindow(cv_window_name, 600,  200)
 
     for i in range(0,buffsize):
         img = cam.read()
