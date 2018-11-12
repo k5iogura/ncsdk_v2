@@ -1,0 +1,49 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+NETWORK_IMAGE_HEIGHT	video_objects.py	/^NETWORK_IMAGE_HEIGHT = 300$/;"	v
+NETWORK_IMAGE_WIDTH	video_objects.py	/^NETWORK_IMAGE_WIDTH = 300$/;"	v
+__init__	g_camera.py	/^    def __init__(self,source_mode='UVC', Queue=None, deviceNo=0, fps= 30,w=320, h=240):$/;"	m	class:video_source
+__init__	g_detector.py	/^    def __init__(self, callback_func, graph_filename="graph", used_limit=10):$/;"	m	class:detector
+args	cam_detector.py	/^    args = argparse.ArgumentParser()$/;"	v
+args	cam_detector.py	/^    args = args.parse_args()$/;"	v
+close	g_detector.py	/^    def close(self):$/;"	m	class:detector
+cv_window_name	video_objects.py	/^cv_window_name = "SSD Mobilenet"$/;"	v
+decode_key	cam_detector.py	/^def decode_key(key):$/;"	f
+detector	g_detector.py	/^class detector:$/;"	c
+deviceEmpy	g_detector.py	/^    deviceEmpy = [ 1 for i in range(0, 10) ]$/;"	v	class:detector
+deviceInfo	g_detector.py	/^    deviceInfo = True$/;"	v	class:detector
+draw_img	cam_detector.py	/^def draw_img(display_image):$/;"	f
+finish	g_detector.py	/^    def finish(self, image_source=None):$/;"	m	class:detector
+frames	g_detector.py	/^    frames = 0$/;"	v	class:detector
+handle_args	video_objects.py	/^def handle_args():$/;"	f
+handle_keys	video_objects.py	/^def handle_keys(raw_key):$/;"	f
+initiate	g_detector.py	/^    def initiate(self, image_source):$/;"	m	class:detector
+input_video_path	video_objects.py	/^input_video_path = '.'$/;"	v
+labels	video_objects.py	/^labels = ('background',$/;"	v
+main	cam_detector.py	/^def main(args):$/;"	f
+main	video_objects.py	/^def main():$/;"	f
+min_score_percent	video_objects.py	/^min_score_percent = 60$/;"	v
+output	g_detector.py	/^    output = None$/;"	v	class:detector
+overlay	cam_detector.py	/^def overlay(source_image, result):$/;"	f
+overlay_on_image	video_objects.py	/^def overlay_on_image(display_image, object_info):$/;"	f
+preprocess_image	video_objects.py	/^def preprocess_image(source_image):$/;"	f
+print_usage	video_objects.py	/^def print_usage():$/;"	f
+read	g_camera.py	/^    def read(self):$/;"	m	class:video_source
+release	g_camera.py	/^    def release(self):$/;"	m	class:video_source
+resize_output	video_objects.py	/^resize_output = False$/;"	v
+resize_output_height	cam_detector.py	/^    resize_output_height= args.height$/;"	v
+resize_output_height	video_objects.py	/^resize_output_height = 0$/;"	v
+resize_output_width	cam_detector.py	/^    resize_output_width = args.width$/;"	v
+resize_output_width	video_objects.py	/^resize_output_width = 0$/;"	v
+run_inference	video_objects.py	/^def run_inference(image_to_classify, ssd_mobilenet_graph):$/;"	f
+set_callback	g_detector.py	/^    def set_callback(self, callback_func):$/;"	m	class:detector
+set_postproc	g_detector.py	/^    def set_postproc(self, postproc_func):$/;"	m	class:detector
+set_preproc	g_detector.py	/^    def set_preproc(self, preproc_func):$/;"	m	class:detector
+start	g_camera.py	/^    def start(self):$/;"	m	class:video_source
+start_thread	g_camera.py	/^def start_thread(Q, vs):$/;"	f
+timer	cam_detector.py	/^def timer():$/;"	f
+video_source	g_camera.py	/^class video_source:$/;"	c
