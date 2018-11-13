@@ -74,8 +74,6 @@ def main(args):
 
     buffsize = max( args.buffsize, min( args.Nset, len( mvnc.enumerate_devices() ) ) )
     num_elem = args.fifo_sz
-    print("window size",args.width,args.height)
-    print("buffsize = %d fifo_num_elem = %d"%(buffsize, num_elem))
 
     Detector = [ None for i in range(0,buffsize) ]
     for i in range(0,buffsize):
@@ -89,6 +87,8 @@ def main(args):
     cv2.namedWindow(cv_window_name)
     cv2.moveWindow( cv_window_name, args.posX,  args.posY)
 
+    print("window size",args.width,args.height)
+    print("buffsize = %d fifo_num_elem = %d"%(buffsize, num_elem))
     sys.stdout.write("Step-1 Warmup 0.2sec ")
     for i in range(0,buffsize):
         img = cam.read()
