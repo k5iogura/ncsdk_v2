@@ -84,7 +84,8 @@ def main(args):
     cam = video_source(which_source(args.uvc), w=args.width, h=args.height).start()
 
     cv2.namedWindow(cv_window_name)
-    cv2.moveWindow( cv_window_name, 600,  200)
+    #cv2.moveWindow( cv_window_name, 600,  200)
+    cv2.moveWindow( cv_window_name, args.posX,  args.posY)
 
     for i in range(0,buffsize):
         img = cam.read()
@@ -99,6 +100,7 @@ def main(args):
         for i in range(0, buffsize):
             try:
                 display_image[i] = cam.read()
+                if args.flip >= 0: display_image[i] = cv2.flip(display_image[i], args.flip)        #flip axis X
         #        image_overlapped = Detector[i].finish(display_image[i]) # fetch and overlap version
                 output = Detector[i].fetch()
                 Detector[i].initiate(display_image[i])
@@ -144,6 +146,9 @@ if __name__ == "__main__":
     args = argparse.ArgumentParser()
     args.add_argument("-W", "--width" ,  type=int, default=640,  help="video width")
     args.add_argument("-H", "--height",  type=int, default=480,  help="video height")
+    args.add_argument("-X", "--posX"  ,  type=int, default=10,  help="video pos X")
+    args.add_argument("-Y", "--posY"  ,  type=int, default=10,  help="video pos Y")
+    args.add_argument("-F", "--flip"  ,  type=int, default=-2,  help="video flip axis X/Y/None(-2)")
     args.add_argument("-r", "--resize",  action="store_true",    help="resize window")
     args.add_argument("-u", "--uvc",     action="store_true",    help="Use UVC")
     args.add_argument("-N", "--Nset",    type=int, default=10,   help="limit of Using Nset def=10")
