@@ -27,7 +27,9 @@ Linux-PC with internet connection
 
 ***On Linux PC Again***
 
-- Issue arp-scan command to know IP-Address of Raspberry-PI
+To find IP-Address of Raspberry-Pi there are 2 ways,  
+
+- **Use arp-scan** command to know IP-Address of Raspberry-PI
 ```
 # arp-scan -l --interface eth0
 192.168.11.18	xx:yy:eb:4e:8a:e0	Raspberry Pi Foundation
@@ -38,9 +40,14 @@ $ ssh pi@192.168.11.18
 $ uname -a
 Linux raspberrypi 4.14.71-v7+ #1145 SMP Fri Sep 21 15:38:35 BST 2018 armv7l GNU/Linux
 ```
-Here, default ID/Password is **pi/raspberry**
 
-**Upgrade and setup Ubuntu 16.04 environment for NCSDK**  
+- **Use Avahi(avahi-daemon)** it's easy way!  
+```
+$ ssh -I pi raspberrypi.local
+```
+Here, default ID/Password is **pi/raspberry**  
+### Upgrade and setup Ubuntu 16.04 environment for NCSDK  
+Setup ubuntu  
 ```
 # apt update
 # apt upgrade
@@ -60,8 +67,7 @@ Fixing disable Display Blanking, some operation is needed,
 [SeatDefaults]
 xserver-command=X -s 0 -dpms
 ```
-and reboot!
-
+and reboot!  
 **Download NCSDK Version.2**
 ```
 // As installation under Home directory,,,
@@ -114,9 +120,8 @@ NCS device working.
 OK Device Open/Close.  
 
 ## UVC Camera check
-
 **Insert UVC Camera into USB Port**  
-Recognize UVC Camera to Linux
+Recognize UVC Camera to Linux  
 ```
 $ dmesg | tail
 [ 3935.504543] uvcvideo: Found UVC 1.00 device <unnamed> (046d:0825)
@@ -126,7 +131,8 @@ $ dmesg | tail
 [ 3935.519593] uvcvideo 1-1.1.3:1.0: Entity type for entity Processing 2 was not initialized!
 [ 3935.519603] uvcvideo 1-1.1.3:1.0: Entity type for entity Extension 3 was not initialized!
 [ 3935.519612] uvcvideo 1-1.1.3:1.0: Entity type for entity Camera 1 was not initialized!
-[ 3935.519994] input: UVC Camera (046d:0825) as /devices/platform/soc/3f980000.usb/usb1/1-1/1-1.1/1-1.1.3/1-1.1.3:1.0/input/input0
+[ 3935.519994] input: UVC Camera (046d:0825) as /devices/platform/soc/3f980000.usb/usb1/
+1-1/1-1.1/1-1.1.3/1-1.1.3:1.0/input/input0
 [ 3935.520233] usbcore: registered new interface driver uvcvideo
 [ 3935.520239] USB Video Class driver (1.1.1)
 ```
