@@ -59,6 +59,7 @@ def main(args):
     display_image=[blank for i in range(0,buffsize)]
     start_time = time.perf_counter()
     start_frames = Detector[0].frames
+    max_thermal = thermal = 0.0
     while(True):
         for i in range(0, buffsize):
             try:
@@ -66,6 +67,8 @@ def main(args):
                 image_overlapped = Detector[i].finish(None)
                 Detector[i].initiate(display_image[i])
                 playback_count += 1
+                thermal = Detector[i].thermal()
+                max_thermal = max( thermal, max_thermal )
             except Exception as e:
                 print("Any Exception found:",e.args)
                 exit_app = True
@@ -76,8 +79,9 @@ def main(args):
                 end_frames = Detector[0].frames
                 playback_per_second = playback_count / (end_time - start_time)
                 predicts_per_second = (end_frames - start_frames) / (end_time - start_time)
-                sys.stdout.write('\b'*(20+13))
+                sys.stdout.write('\b'*(20+13+13))
                 sys.stdout.write("%8.3fFPS(%8.3fSPF)"%(predicts_per_second, 1.0/predicts_per_second))
+                sys.stdout.write("%5.1fC"%(max_thermal))
                 sys.stdout.flush()
                 if cv2.waitKey(1) != -1: exit_app = True
             if exit_app: break

@@ -16,6 +16,7 @@ class detector:
         self.deviceNo  = -1
         self.initiated = False
         self.callback  = callback_func
+        self.device    = None
         self.preproc   = None
         self.postproc  = None
 
@@ -115,4 +116,9 @@ class detector:
         self.graph_obj.destroy()
         self.device.close()
         self.device.destroy()
+
+    def thermal(self):
+        if self.deviceNo < 0: return 0.0
+        THERMAL_STATS = mvnc.DeviceOption.RO_THERMAL_STATS
+        return float(self.device.get_option(THERMAL_STATS)[0])
 
