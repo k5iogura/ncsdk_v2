@@ -50,6 +50,7 @@ def main(args):
     blank = numpy.zeros(3*300*300).astype(numpy.float32).reshape((300,300,3)) # for performance test image
     fontSz = blank.shape[1]/320
     cv2.putText( blank, "Performance Test", (0,int(blank.shape[0]/2)), cv2.FONT_HERSHEY_SIMPLEX, fontSz, (128,255,255), 1, cv2.LINE_AA)
+    print("Perfomance Test")
 
     for i in range(0,buffsize):
         img = blank
