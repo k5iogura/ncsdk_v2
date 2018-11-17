@@ -108,6 +108,14 @@ class detector:
 
         return copy_image
 
+    # fetch result NCS
+    def fetch(self):
+        if self.initiated:
+            output, _ = self.fifo_out.read_elem()
+            detector.output = output
+            self.initiated  = False
+        return detector.output
+
     # Clean up the graph and the device
     def close(self):
         if self.deviceNo < 0: return

@@ -57,15 +57,15 @@ def main(args):
     playback_count = 0
     playback_per_second = predicts_per_second = 0
     display_image=[blank for i in range(0,buffsize)]
+    count_time = 0.0
     start_time = time.perf_counter()
     start_frames = Detector[0].frames
     max_thermal = thermal = 0.0
     while(True):
         for i in range(0, buffsize):
             try:
-                display_image[i] = blank
-                image_overlapped = Detector[i].finish(None)
-                Detector[i].initiate(display_image[i])
+                Detector[i].fetch()
+                Detector[i].initiate(blank)
                 playback_count += 1
                 thermal = Detector[i].thermal()
                 max_thermal = max( thermal, max_thermal )
@@ -76,14 +76,16 @@ def main(args):
         try:
             if (playback_count % 33) == 0:
                 end_time = time.perf_counter()
+                count_start= time.perf_counter()
                 end_frames = Detector[0].frames
-                playback_per_second = playback_count / (end_time - start_time)
-                predicts_per_second = (end_frames - start_frames) / (end_time - start_time)
+                playback_per_second = playback_count / (end_time - start_time - count_time)
+                predicts_per_second = (end_frames - start_frames) / (end_time - start_time - count_time)
                 sys.stdout.write('\b'*(20+13+13))
                 sys.stdout.write("%8.3fFPS(%8.3fSPF)"%(predicts_per_second, 1.0/predicts_per_second))
                 sys.stdout.write("%5.1fC"%(max_thermal))
                 sys.stdout.flush()
                 if cv2.waitKey(1) != -1: exit_app = True
+                count_time = time.perf_counter() - count_start
             if exit_app: break
         except : break
         if exit_app: break
