@@ -1,4 +1,4 @@
-# Report of performance about NCS x Nset with SSD_MobileNet
+# Result of performance test about NCS x Nset with SSD_MobileNet
 
 - RaspberryPi-3 B+ x 1 with stretch  
 - NCS x **Nset** with NCSDK v2.8.1.2  
