@@ -15,6 +15,8 @@ from sys import argv
 from g_camera   import *
 from video_objects import *
 
+cv_window_name = "Performace Test for Camera"
+
 def draw_img(display_image):
     global resize_output, resize_output_width, resize_output_height
     if (resize_output):
@@ -84,6 +86,7 @@ if __name__ == "__main__":
     resize_output_width = args.width
     resize_output_height= args.height
 
+    print("Image size %d %d"%(args.width, args.height))
     if args.main:
         print("Camera On Main Process")
         sys.exit(main(args.uvc, args.width, args.height))
