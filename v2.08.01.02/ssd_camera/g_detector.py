@@ -12,7 +12,7 @@ class detector:
     deviceInfo = True
     output = None
     frames = 0
-    def __init__(self, callback_func, graph_filename="graph", used_limit=10):
+    def __init__(self, callback_func=None, graph_filename="graph", used_limit=10):
         self.deviceNo  = -1
         self.initiated = False
         self.callback  = callback_func
@@ -76,6 +76,7 @@ class detector:
         detector.frames += 1
         self.initiated = True
 
+        resized_image = image_source
         if self.preproc is not None:
             resized_image = self.preproc(image_source)
 
