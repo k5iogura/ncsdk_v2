@@ -82,6 +82,10 @@ def handle_keys(raw_key):
 #         6: box bottom location within image as number between 0.0 and 1.0
 # returns None
 def overlay_on_image(display_image, object_info):
+#
+#   modified Nov.17 '18
+#   By K.Ogura
+#
     source_image_width = display_image.shape[1]
     source_image_height = display_image.shape[0]
 
@@ -108,26 +112,29 @@ def overlay_on_image(display_image, object_info):
 
     # draw the classification label string just above and to the left of the rectangle
     #label_background_color = (70, 120, 70)  # greyish green background for text
-    label_background_color = (0, int(scale * 175), 75)
-    label_background_color = (0, 75, int(scale * 175))  # modified
+    #label_background_color = (0, int(scale * 175), 75)  # remove
+    #label_background_color = (0, 75, int(scale * 175))  # remove
     label_text_color = (255, 255, 255)  # white text
 
-    label_size = cv2.getTextSize(label_text, cv2.FONT_HERSHEY_SIMPLEX, 0.5, 1)[0]
+    fontSz = min( 1, display_image.shape[1]/320/2 )       # add
+    label_size = cv2.getTextSize(label_text, cv2.FONT_HERSHEY_SIMPLEX, fontSz, 1)[0]    # add
+    #label_size = cv2.getTextSize(label_text, cv2.FONT_HERSHEY_SIMPLEX, 0.5, 1)[0]      # remove
     label_left = box_left
     label_top = box_top - label_size[1]
     if (label_top < 1):
         label_top = 1
     label_right = label_left + label_size[0]
     label_bottom = label_top + label_size[1]
-    cv2.rectangle(display_image, (label_left - 1, label_top - 1), (label_right + 1, label_bottom + 1),
-                  label_background_color, -1)
+    #cv2.rectangle(display_image, (label_left - 1, label_top - 1), (label_right + 1, label_bottom + 1), # remove
+    #              label_background_color, -1)
 
     # label text above the box
-    cv2.putText(display_image, label_text, (label_left, label_bottom), cv2.FONT_HERSHEY_SIMPLEX, 0.5, label_text_color, 1)
+    cv2.putText(display_image, label_text, (label_left, label_bottom), cv2.FONT_HERSHEY_SIMPLEX, fontSz, label_text_color, 1) # add
+    #cv2.putText(display_image, label_text, (label_left, label_bottom), cv2.FONT_HERSHEY_SIMPLEX, 0.5, label_text_color, 1)   # remove
 
     # display text to let user know how to quit
-    cv2.rectangle(display_image,(0, 0),(100, 15), (128, 128, 128), -1)
-    cv2.putText(display_image, "Q to Quit", (10, 12), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 0, 0), 1)
+    #cv2.rectangle(display_image,(0, 0),(100, 15), (128, 128, 128), -1)                                 # remove
+    #cv2.putText(display_image, "Q to Quit", (10, 12), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 0, 0), 1)   # remove
 
 
 #return False if found invalid args or True if processed ok

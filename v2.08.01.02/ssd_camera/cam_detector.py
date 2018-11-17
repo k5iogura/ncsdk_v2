@@ -22,19 +22,36 @@ def overlay(source_image, result):
         draw_img(source_image)
         return
 
+    top1_idx = 0
+    top1_per = 0
     for ibox in range(int(result[0])):
-            offset_box = (ibox + 1) * 7
-            if (
-                    not numpy.isfinite(result[offset_box + 0]) or
-                    not numpy.isfinite(result[offset_box + 1]) or
-                    not numpy.isfinite(result[offset_box + 2]) or
-                    not numpy.isfinite(result[offset_box + 3]) or
-                    not numpy.isfinite(result[offset_box + 4]) or
-                    not numpy.isfinite(result[offset_box + 5]) or
-                    not numpy.isfinite(result[offset_box + 6])
-                ):
-                continue
-            overlay_on_image(source_image, result[offset_box:offset_box + 7])
+        offset_box = (ibox + 1) * 7
+        if (
+                not numpy.isfinite(result[offset_box + 0]) or
+                not numpy.isfinite(result[offset_box + 1]) or
+                not numpy.isfinite(result[offset_box + 2]) or
+                not numpy.isfinite(result[offset_box + 3]) or
+                not numpy.isfinite(result[offset_box + 4]) or
+                not numpy.isfinite(result[offset_box + 5]) or
+                not numpy.isfinite(result[offset_box + 6])
+            ):
+            continue
+        overlay_on_image(source_image, result[offset_box:offset_box + 7])
+
+        percentage = result[offset_box+2]
+        labelindex = int(result[offset_box+1])
+        if percentage > top1_per:
+            top1_per = percentage
+            top1_idx = labelindex
+
+    if top1_per > 0.6:
+        info = "%5.1f%% %s"%(100.0*top1_per, labels[labelindex])
+        spaceH = int(source_image.shape[0]*0.90)
+        spaceW = int(source_image.shape[1]*0.01)
+        fontSz = source_image.shape[1]/320
+        if fontSz < 1.0: B=1
+        else:            B=2
+        cv2.putText( source_image, info, (spaceW,spaceH), cv2.FONT_HERSHEY_SIMPLEX, fontSz, (128,255,255), B, cv2.LINE_AA)
 
 def draw_img(display_image):
     global resize_output, resize_output_width, resize_output_height
@@ -67,7 +84,7 @@ def main(args):
     cam = video_source(which_source(args.uvc), w=args.width, h=args.height).start()
 
     cv2.namedWindow(cv_window_name)
-    cv2.moveWindow(cv_window_name, 600,  200)
+    cv2.moveWindow( cv_window_name, 600,  200)
 
     for i in range(0,buffsize):
         img = cam.read()
