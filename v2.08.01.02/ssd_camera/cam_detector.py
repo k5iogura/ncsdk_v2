@@ -82,8 +82,11 @@ def main(args):
         for i in range(0, buffsize):
             try:
                 display_image[i] = cam.read()
-                image_overlapped = Detector[i].finish(display_image[i])
+        #        image_overlapped = Detector[i].finish(display_image[i]) # fetch and overlap version
+                output = Detector[i].fetch()
                 Detector[i].initiate(display_image[i])
+                image = Detector[i].apply_callback(display_image[i], output)
+                image_overlapped = Detector[i].apply_postproc(image)
                 key = draw_img(image_overlapped)
                 if (key != -1):
                     if (decode_key(key) == False):

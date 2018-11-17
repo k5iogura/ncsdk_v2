@@ -89,7 +89,7 @@ class detector:
         )
 
     # get result of NCS and call callback function with image and result
-    def finish(self, image_source=None):
+    def finish2(self, image_source=None):
         copy_image = None
         if self.initiated:
             output, _ = self.fifo_out.read_elem()
@@ -108,6 +108,11 @@ class detector:
 
         return copy_image
 
+    def finish(self, image_source=None):
+        output = self.fetch()
+        image = self.apply_callback(image_source, output)
+        return self.apply_postproc(image)
+
     # fetch result NCS
     def fetch(self):
         if self.initiated:
@@ -115,6 +120,19 @@ class detector:
             detector.output = output
             self.initiated  = False
         return detector.output
+
+    def apply_callback(self, image_source, output):
+        copy_image = None
+        if image_source is not None and output is not None and self.callback is not None:
+            copy_image = image_source.copy()
+            self.callback(copy_image, output)
+        return copy_image
+
+    def apply_postproc(self, image_source):
+        # copy_image may be None, prevent accident in your postproc
+        if self.postproc is not None and image_source is not None:
+            sleff.postproc(image_source)
+        return image_source
 
     # Clean up the graph and the device
     def close(self):
