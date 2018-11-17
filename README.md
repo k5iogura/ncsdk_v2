@@ -2,7 +2,15 @@
 
 # NCSDK v2.08.01.02 with Ubuntu 16.04 on CentOS7 PC  
 
-# For RaspberryPI+NCSDK_v2.08.01.02 is [Here](RaspberryPiModelB+.md)
+## [For RaspberryPI+NCSDK_v2.08.01.02](RaspberryPiModelB+.md)
+
+## [Recent status of Movidius NCS Nov '18](status_of_myriad.md)
+
+## [Can NCS and OpenCV run under Multiprocessing or MultiThread](multi_proc_thread_cv2_mvnc.md)
+
+## [Result of performance test of Multi NCSticks](NCSxNset.md)
+
+## [About DEMO set](Raspbian_StartDemo.md)
 
 ## NCSDK_v2.08.01.02 Full Installation On Desktop PC
 ***Full Installation :***  

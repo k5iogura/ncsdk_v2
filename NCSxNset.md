@@ -1,4 +1,4 @@
-# Report of performance about NCS x Nset with SSD_MobileNet
+# Result of performance test about NCS x Nset with SSD_MobileNet
 
 - RaspberryPi-3 B+ x 1 with stretch  
 - NCS x **Nset** with NCSDK v2.8.1.2  
@@ -9,18 +9,18 @@
 ### Result Prediction FPS against Nset
 
 ***
-**Abstruction of Pararell Behavier of 2set NCS**  
+**Abstruction of Pararell Behavier of 2 NCS set**  
 
-|NCS|Finish|Initiate|Finish|Initiate|Finish|Initiate|Finish|Initiate|...|
-|-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
-|1|O|O|-|-|O|O|-|-|...|
-|2|-|-|O|O|-|-|O|O|...|
+|NCS|fetch|Initiate|draw|fetch|Initiate|draw|fetch|Initiate|...|
+| -:| :-: |  :-:   | :-:| :-: |  :-:   | :-:| :-: |  :-:   |:-:|
+|1  |    O|       O|   O|    -|       -|   -|    O|       O|...|
+|2  |    -|       -|   -|    O|       O|   O|    -|       -|...|
 
-_________________________________________________________________________________________________\ Time
+______________________________________________________________\ Time
 
 O:Operation of Finish or Initiate for NCS  
 -: Target NCS is Busy  
-Finish Operation : read_elem()  
+Fetch Operation : read_elem()  
 Initiate Operation: queue_inference_with_fifo_elm()  
 ***  
 
