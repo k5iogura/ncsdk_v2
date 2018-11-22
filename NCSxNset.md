@@ -47,6 +47,16 @@ Video Playback is skipped. Only pararell prediction result bellow.
 | 1| 6.8|20.3| 1280x720| - |
 | 2|12.9|19.3| 1280x720| - |
 
+**FPS with perf_det.py script**  
+On Virtual box Ubuntu 16.04
+
+|Nset|Pred|SPF|PiCamera Size|
+|  -:|  -:|  -:|       -:|
+|    | FPS|msec|  320x240|
+|   1| 8.6| 116|  320x240|
+|   2|17.1|  58|  320x240|
+|   3|24.1|  41|  320x240|
+
 **Reference Notice**  
 *PiCamera Size* means args h/w values to picamera.videostream.__init__ contructor.   
 *X-Window* means Rendering Window size.  
