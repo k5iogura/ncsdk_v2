@@ -93,6 +93,7 @@ def main(args):
     for i in range(0,buffsize):
         img = cam.read()
         Detector[i].initiate(img)
+        time.sleep(0.2)
 
     playback_count = predicts_count = 0
     playback_per_second = predicts_per_second = 0
