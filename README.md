@@ -51,7 +51,13 @@ $ which mvNCCompile
 ```
 ***You need twice "make install".***  
 ***You must be into new "bash" to update PYTHONPATH.***  
-***You must use "tensorflow"==1.5 because tesnsorflow>1.5 cause Illegal Instruction Error(Seg.V) since having AVX Optimizaion Code.***
+***You must use "tensorflow"==1.5 because tesnsorflow>1.5 cause Illegal Instruction Error(Seg.V) since having AVX Optimizaion Code.***  
+```
+// Some module will be needed
+$ pip3 install graphviz
+$ pip3 scikit-image
+// and more...
+```
 ```
 $ make examples
 ```
