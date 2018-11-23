@@ -114,7 +114,8 @@ def overlay_on_image(display_image, object_info):
     #label_background_color = (70, 120, 70)  # greyish green background for text
     #label_background_color = (0, int(scale * 175), 75)  # remove
     #label_background_color = (0, 75, int(scale * 175))  # remove
-    label_text_color = (255, 255, 255)  # white text
+    #label_text_color = (255, 255, 255)  # remove
+    label_text_color = (0, 0, 255)  # add
 
     fontSz = min( 1, display_image.shape[1]/320/2 )       # add
     label_size = cv2.getTextSize(label_text, cv2.FONT_HERSHEY_SIMPLEX, fontSz, 1)[0]    # add
@@ -129,7 +130,7 @@ def overlay_on_image(display_image, object_info):
     #              label_background_color, -1)
 
     # label text above the box
-    cv2.putText(display_image, label_text, (label_left, label_bottom), cv2.FONT_HERSHEY_SIMPLEX, fontSz, label_text_color, 1) # add
+    cv2.putText(display_image, label_text, (label_left, label_bottom), cv2.FONT_HERSHEY_SIMPLEX, fontSz, label_text_color, 2) # add
     #cv2.putText(display_image, label_text, (label_left, label_bottom), cv2.FONT_HERSHEY_SIMPLEX, 0.5, label_text_color, 1)   # remove
 
     # display text to let user know how to quit

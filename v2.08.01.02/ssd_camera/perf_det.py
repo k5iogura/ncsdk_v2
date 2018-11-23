@@ -60,7 +60,7 @@ def main(args):
     playback_count = 0
     playback_per_second = predicts_per_second = 0
     display_image=[blank for i in range(0,buffsize)]
-    count_time = 0.0
+    count_time = running_time = 0.0
     start_time = time.perf_counter()
     start_frames = Detector[0].frames
     max_thermal = thermal = 0.0
@@ -88,6 +88,7 @@ def main(args):
                 sys.stdout.write("%5.1fC"%(max_thermal))
                 sys.stdout.flush()
                 if cv2.waitKey(1) != -1: exit_app = True
+                running_time += end_time
                 count_time = time.perf_counter() - count_start
             if exit_app: break
         except : break
@@ -100,7 +101,7 @@ def main(args):
             Detector[i].close()
         cv2.destroyAllWindows()
     except : pass
-    print("\nfinalizing OK predict: %.2fFPS"%(predicts_per_second))
+    print("\nfinalizing OK predict: %.2fFPS running %dmin"%(predicts_per_second, int(running_time/(60*1000))))
 
 if __name__ == "__main__":
 

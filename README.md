@@ -33,7 +33,10 @@ $ git clone https://github.com/k5iogura/ncsdk_v2
 ```
 Install ncsdk **full**  
 ```
-$ cd ncsdk_v2 ; make install ; make install;
+$ cd ncsdk_v2
+$ vi ncsdk.conf
+// edit INSTALL_TENSORFLOW=No
+$ make install ; make install;
 $ tail -1 ~/.bashrc
 export "PYTHONPATH=${PYTHONPATH}:/opt/movidius/caffe/python"
 # pip3 list | grep tensorflow
@@ -42,10 +45,19 @@ tensorflow(1.9)
 # pip3 uninstall tensorflow
 # pip3 install tensorflow==1.5
 $ bash
+// check
+$ which mvNCCompile
+/usr/local/bin/mvNCCompile
 ```
 ***You need twice "make install".***  
 ***You must be into new "bash" to update PYTHONPATH.***  
-***You must use "tensorflow"==1.5 because tesnsorflow>1.5 cause Illegal Instruction Error(Seg.V) since having AVX Optimizaion Code.***
+***You must use "tensorflow"==1.5 because tesnsorflow>1.5 cause Illegal Instruction Error(Seg.V) since having AVX Optimizaion Code.***  
+```
+// Some module will be needed
+$ pip3 install graphviz
+$ pip3 scikit-image
+// and more...
+```
 ```
 $ make examples
 ```
