@@ -45,6 +45,9 @@ tensorflow(1.9)
 # pip3 uninstall tensorflow
 # pip3 install tensorflow==1.5
 $ bash
+// check
+$ which mvNCCompile
+/usr/local/bin/mvNCCompile
 ```
 ***You need twice "make install".***  
 ***You must be into new "bash" to update PYTHONPATH.***  
