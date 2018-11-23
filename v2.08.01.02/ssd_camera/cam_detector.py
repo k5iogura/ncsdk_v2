@@ -60,6 +60,7 @@ def draw_img(display_image):
                                    (resize_output_width, resize_output_height),
                                    cv2.INTER_LINEAR)
     cv2.imshow(cv_window_name, display_image)
+    #time.sleep(0.01)
     key = cv2.waitKey(1)
     return key
 
@@ -72,11 +73,13 @@ def decode_key(key):
 def main(args):
     global resize_output, resize_output_width, resize_output_height
 
-    buffsize = 3
+    buffsize = args.buffsize
+    num_elem = args.fifo_sz
+    print("buffsize = %d fifo_num_elem = %d"%(buffsize, num_elem))
 
     Detector = [ None for i in range(0,buffsize) ]
     for i in range(0,buffsize):
-        Detector[i] = detector(callback_func=overlay,used_limit=args.Nset)
+        Detector[i] = detector(num_elem=num_elem, callback_func=overlay,used_limit=args.Nset)
         Detector[i].set_preproc(preprocess_image)
 
     exit_app = False
@@ -112,6 +115,9 @@ def main(args):
                         break
                 playback_count += 1
                 if i == 0: predicts_count += 1
+                #try:
+                    #if i == 0: print(Detector[i].graph_obj.get_option(mvnc.GraphOption.RO_GRAPH_STATE))
+                #except: pass
             except Exception as e:
                 print("Any Exception found:",e.args)
                 exit_app = True
@@ -144,6 +150,8 @@ if __name__ == "__main__":
     args = argparse.ArgumentParser()
     args.add_argument("-W", "--width" ,  type=int, default=640,  help="video width")
     args.add_argument("-H", "--height",  type=int, default=480,  help="video height")
+    args.add_argument("-f", "--fifo_sz", type=int, default=10,   help="fifo size")
+    args.add_argument("-b", "--buffsize",type=int, default=3,    help="buff size")
     args.add_argument("-r", "--resize",  action="store_true",    help="resize window")
     args.add_argument("-u", "--uvc",     action="store_true",    help="Use UVC")
     args.add_argument("-N", "--Nset",    type=int, default=10,   help="limit of Using Nset def=10")

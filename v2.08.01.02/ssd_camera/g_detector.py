@@ -2,6 +2,7 @@
 # License: Such as Unauthorized use is prohibited.
 # mailto : kenji.ogura@jcom.zaq.ne.jp
 
+import sys
 from mvnc import mvncapi as mvnc
 import numpy
 
@@ -12,7 +13,7 @@ class detector:
     deviceInfo = True
     output = None
     frames = 0
-    def __init__(self, callback_func=None, graph_filename="graph", used_limit=10):
+    def __init__(self, num_elem=10, callback_func=None, graph_filename="graph", used_limit=10):
         self.deviceNo  = -1
         self.initiated = False
         self.callback  = callback_func
@@ -34,7 +35,7 @@ class detector:
             if detector.deviceEmpy[d_idx] == 1:
                 detector.deviceEmpy[d_idx] = 0
                 self.deviceNo = d_idx
-                print("Using device %d"%(self.deviceNo))
+                sys.stdout.write("Using device %d "%(self.deviceNo))
                 break
         if self.deviceNo < 0: return
 
@@ -55,8 +56,11 @@ class detector:
 
             self.fifo_in, self.fifo_out = self.graph_obj.allocate_with_fifos(
                 self.device,
-                self.graph_data
+                self.graph_data,
+                input_fifo_num_elem=num_elem,
+                output_fifo_num_elem=num_elem
             )
+            print("RO_CAPACITY",self.fifo_in.get_option(mvnc.FifoOption.RO_CAPACITY))
         except Exception as e:
             print("Exception occurred ",e.args)
             quit()
@@ -85,7 +89,7 @@ class detector:
             self.fifo_in,
             self.fifo_out,
             resized_image.astype(numpy.float32),
-            resized_image
+            None
         )
 
     # get result of NCS and call callback function with image and result
@@ -116,7 +120,7 @@ class detector:
     # fetch result NCS
     def fetch(self):
         if self.initiated:
-            output, _ = self.fifo_out.read_elem()
+            output, user_obj= self.fifo_out.read_elem()
             detector.output = output
             self.initiated  = False
         return detector.output
