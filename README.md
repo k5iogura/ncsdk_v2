@@ -33,7 +33,10 @@ $ git clone https://github.com/k5iogura/ncsdk_v2
 ```
 Install ncsdk **full**  
 ```
-$ cd ncsdk_v2 ; make install ; make install;
+$ cd ncsdk_v2
+$ vi ncsdk.conf
+// edit INSTALL_TENSORFLOW=No
+$ make install ; make install;
 $ tail -1 ~/.bashrc
 export "PYTHONPATH=${PYTHONPATH}:/opt/movidius/caffe/python"
 # pip3 list | grep tensorflow
