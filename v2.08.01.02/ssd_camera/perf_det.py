@@ -33,16 +33,36 @@ def decode_key(key):
         return False
     return True
 
+# fifo buffers warmup2
+combination = (
+    (  5,3, 0.0 ),
+    ( 10,3, 0.0 ),
+    ( 20,5, 0.010 ),
+    ( 20,6, 0.030 )
+)
 def main(args):
     global resize_output, resize_output_width, resize_output_height
 
-    buffsize = 3
+    buffsize = args.buffer
+    Nsticks  = min( args.Nset, len(mvnc.enumerate_devices()) )
+    buffsize = max( buffsize,  Nsticks )
+    num_elem = args.fifo
+    warmup2  = 0.0
+    if not args.nocombi:
+        num_elem = combination[Nsticks-1][0]
+        buffsize = combination[Nsticks-1][1]
+        warmup2  = combination[Nsticks-1][2]
+    if args.warmup>0.0:
+        warmup2  = args.warmup
 
     Detector = [ None for i in range(0,buffsize) ]
     for i in range(0,buffsize):
-        Detector[i] = detector(used_limit=args.Nset)
+        Detector[i] = detector(num_elem=num_elem, used_limit=args.Nset)
 
     exit_app = False
+
+    print("Nsticks= %d"%(Nsticks))
+    print("fifo/buffers/warmup2=%d/%d/%.3f"%(num_elem, buffsize, warmup2))
 
     cv2.namedWindow(cv_window_name)
     cv2.moveWindow(cv_window_name, 600,  200)
@@ -52,14 +72,20 @@ def main(args):
     cv2.putText( blank, "Performance Test", (0,int(blank.shape[0]/2)), cv2.FONT_HERSHEY_SIMPLEX, fontSz, (128,255,255), 1, cv2.LINE_AA)
     print("Perfomance Test")
 
+    sys.stdout.write("Step-1 Warmup 0.2sec ")
+    blanks = [ blank.copy() for i in range(0,buffsize) ]
     for i in range(0,buffsize):
-        img = blank
+        img = blanks[i]
         Detector[i].initiate(img)
-        draw_img(blank)
+        draw_img(blanks[i])
+        sys.stdout.write(".")
+        sys.stdout.flush()
+        time.sleep(0.2)
+    print("\nStep-2 Warmup 1.0sec")
+    time.sleep(1.0)
 
     playback_count = 0
     playback_per_second = predicts_per_second = 0
-    display_image=[blank for i in range(0,buffsize)]
     count_time = running_time = 0.0
     start_time = time.perf_counter()
     start_frames = Detector[0].frames
@@ -68,10 +94,14 @@ def main(args):
         for i in range(0, buffsize):
             try:
                 Detector[i].fetch()
-                Detector[i].initiate(blank)
+                Detector[i].initiate(blanks[i])
                 playback_count += 1
                 thermal = Detector[i].thermal()
                 max_thermal = max( thermal, max_thermal )
+                if warmup2 > 0.0:
+                    time.sleep(warmup2)
+                #time.sleep(0.030)   # for timing wait 4 sticks
+                #time.sleep(0.010)   # for timing wait 4 sticks
             except Exception as e:
                 print("Any Exception found:",e.args)
                 exit_app = True
@@ -108,8 +138,12 @@ if __name__ == "__main__":
     args = argparse.ArgumentParser()
     args.add_argument("-W", "--width" ,  type=int, default=640,  help="video width")
     args.add_argument("-H", "--height",  type=int, default=480,  help="video height")
+    args.add_argument("-f", "--fifo",    type=int, default=10,   help="fifo size")
+    args.add_argument("-b", "--buffer",  type=int, default=3,    help="buffer size")
+    args.add_argument("-w", "--warmup",  type=float,default=-1.0,help="warmup2 time")
     args.add_argument("-r", "--resize",  action="store_true",    help="resize window")
     args.add_argument("-u", "--uvc",     action="store_true",    help="Use UVC")
+    args.add_argument("-nc","--nocombi", action="store_true",   help="Use Combinational parametor")
     args.add_argument("-N", "--Nset",    type=int, default=10,   help="limit of Using Nset def=10")
     args = args.parse_args()
     if args.resize: resize_output=True
