@@ -73,8 +73,9 @@ def decode_key(key):
 def main(args):
     global resize_output, resize_output_width, resize_output_height
 
-    buffsize = args.buffsize
+    buffsize = max( args.buffsize, min( args.Nset, len( mvnc.enumerate_devices() ) ) )
     num_elem = args.fifo_sz
+    print("window size",args.width,args.height)
     print("buffsize = %d fifo_num_elem = %d"%(buffsize, num_elem))
 
     Detector = [ None for i in range(0,buffsize) ]
@@ -87,13 +88,17 @@ def main(args):
     cam = video_source(which_source(args.uvc), w=args.width, h=args.height).start()
 
     cv2.namedWindow(cv_window_name)
-    #cv2.moveWindow( cv_window_name, 600,  200)
     cv2.moveWindow( cv_window_name, args.posX,  args.posY)
 
+    sys.stdout.write("Step-1 Warmup 0.2sec ")
     for i in range(0,buffsize):
         img = cam.read()
         Detector[i].initiate(img)
+        sys.stdout.write(".")
+        sys.stdout.flush()
         time.sleep(0.2)
+    print("\nStep-2 Warmup 1.0sec")
+    time.sleep(1.0)
 
     playback_count = predicts_count = 0
     playback_per_second = predicts_per_second = 0
