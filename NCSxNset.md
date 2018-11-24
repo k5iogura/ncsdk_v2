@@ -8,6 +8,8 @@
 - HDMI Display  
 **Nset:** Number of Used Neural Compute Sticks  
 
+![](files/MultiSticks.jpg)
+
 ### Result Prediction FPS against Nset
 
 ***
