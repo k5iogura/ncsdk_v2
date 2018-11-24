@@ -23,7 +23,7 @@ def overlay(source_image, result):
         return
 
     top1_idx = 0
-    top1_per = 0
+    top1_per = 0.6
     for ibox in range(int(result[0])):
         offset_box = (ibox + 1) * 7
         if (
@@ -60,7 +60,6 @@ def draw_img(display_image):
                                    (resize_output_width, resize_output_height),
                                    cv2.INTER_LINEAR)
     cv2.imshow(cv_window_name, display_image)
-    #time.sleep(0.01)
     key = cv2.waitKey(1)
     return key
 
@@ -128,6 +127,7 @@ def main(args):
                 #except: pass
             except Exception as e:
                 print("Any Exception found:",e.args)
+                print("\nLifetime %.3fmin"%((time.perf_counter()-start_time)/60.0))
                 exit_app = True
                 break
         try:
@@ -151,7 +151,8 @@ def main(args):
         cam.release()
         cv2.destroyAllWindows()
     except : pass
-    print("\nfinalizing OK playback: %.2fFPS predict: %.2fFPS"%(playback_per_second, predicts_per_second))
+    print("\nLifetime %.3fmin"%((time.perf_counter()-start_time)/60.0))
+    print("finalizing OK playback: %.2fFPS predict: %.2fFPS"%(playback_per_second, predicts_per_second))
 
 if __name__ == "__main__":
 
