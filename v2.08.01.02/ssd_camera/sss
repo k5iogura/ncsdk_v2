@@ -5,5 +5,5 @@ export DISPLAY=:0
 #sudo -u pi xhost +
 #cd /home/pi/movidius/ncsdk_v2/v2.08.01.02/ssd_cameraDemo
 cd /home/pi/movidius/ncsdk_v2/v2.08.01.02/ssd_camera
-xterm -fn -*-*-*-*-*-*-14-140-*-*-*-92-*-* -geometry +10+10 -e "python3 cam_detector.py -F 0 -H 440 -W 600 -X 10 -Y 10"
+xterm -fn -*-*-*-*-*-*-14-140-*-*-*-92-*-* -geometry +10+10 -e "python3 cam_detector.py -F 0 -H 448 -W 608 -X 10 -Y 10"
 
