@@ -1,5 +1,22 @@
 # Status movidius now
-Nov.04.2018  from google
+Nov.21.2018  from google  
+**Movidius 2nd Generation NCS2(MyriadX)**  
+
+### MyriadX Chip View  
+![Chip View](files/myriadX.jpg)
+
+### [NCS2 on Drone](https://www.slashgear.com/intel-neural-compute-stick-2-artificial-intelligence-ncs-usb-stick-price-performance-14553676/)
+![](files/NCS2_Drone_Program.jpg)
+
+### [Certification via face  recognistion](http://monoist.atmarkit.co.jp/mn/articles/1811/16/news059.html)
+
+**ET2018**
+
+![](files/CertificationByNTT.jpg)
+![](files/CertificationByNTT_Board.jpg)
+
+Nov.04.2018  from google  
+**Movidius 1st Generation NCS(Myriad2)**    
 ### **Use Case from Movidius HP**  
 ![](files/ncs_workflow.jpg)
 ### **With Raspberry Pi ModelB**

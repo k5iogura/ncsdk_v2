@@ -1,10 +1,14 @@
 # Result of performance test about NCS x Nset with SSD_MobileNet
 
+## [How to make multi NCS stable](HowToMakeNCSStable.md)
+
 - RaspberryPi-3 B+ x 1 with stretch  
 - NCS x **Nset** with NCSDK v2.8.1.2  
 - element14 MIPI-CSI Camera  
 - HDMI Display  
 **Nset:** Number of Used Neural Compute Sticks  
+
+![](files/MultiSticks.jpg)
 
 ### Result Prediction FPS against Nset
 
