@@ -5,6 +5,7 @@
 import sys
 from mvnc import mvncapi as mvnc
 import numpy
+import time
 
 class detector:
     # graph_filename is graph binary file made by mvNCCompile
@@ -35,7 +36,7 @@ class detector:
             if detector.deviceEmpy[d_idx] == 1:
                 detector.deviceEmpy[d_idx] = 0
                 self.deviceNo = d_idx
-                sys.stdout.write("Using device %d "%(self.deviceNo))
+                print("Using device %d "%(self.deviceNo))
                 break
         if self.deviceNo < 0: return
 
@@ -46,6 +47,13 @@ class detector:
 
         try:
             self.device = mvnc.Device(self.devices[self.deviceNo])
+
+            #self.RO_MAX_FIFO_NUM    = self.device.get_option(mvnc.DeviceOption.RO_MAX_FIFO_NUM)   # UNAUTHENTICATION
+            #self.RO_MAX_GRAPH_NUM   = self.device.get_option(mvnc.DeviceOption.RO_MAX_GRAPH_NUM)  # UNAUTHENTICATION
+            #self.RO_FW_VERSION      = self.device.get_option(mvnc.DeviceOption.RO_FW_VERSION)     # UNAUTHENTICATION
+            print(" *RO_HW_VERSION",   self.device.get_option(mvnc.DeviceOption.RO_HW_VERSION))
+            #self.RO_MVTENSOR_VERSION = self.device.get_option(mvnc.DeviceOption.RO_MVTENSOR_VERSION) # UNAUTHENTICATION
+            print(" *RO_DEVICE_NAME",  self.device.get_option(mvnc.DeviceOption.RO_DEVICE_NAME))
 
             self.device.open()
 
@@ -60,10 +68,16 @@ class detector:
                 input_fifo_num_elem=num_elem,
                 output_fifo_num_elem=num_elem
             )
-            print("RO_CAPACITY",self.fifo_in.get_option(mvnc.FifoOption.RO_CAPACITY))
+            print(" *RO_CAPACITY",self.fifo_in.get_option(mvnc.FifoOption.RO_CAPACITY))
         except Exception as e:
             print("Exception occurred ",e.args)
             quit()
+
+    def warmup(self, blank=None, t1=0.2, t2=1.0):
+        if blank is None:
+            blank = numpy.zeros(3*300*300).astype(numpy.float32).reshape((300,300,3))
+        self.initiate(blank)
+        time.sleep(t1+t2)
 
     def set_preproc(self, preproc_func):
         self.preproc = preproc_func
