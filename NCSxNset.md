@@ -76,6 +76,7 @@ We ware testing for LongRun. top command show bellow,
 ![](files/top_longrun24h.png)
 
 RaspberryPi-3 use **memory about 150MB** for Linux, X-Window and 2NCS'.  
+In this usage, 2NCS uses 50MB memory.  
 Therefore RaspberryPi Zero which has 512MB memory, may run NCS inference job.  
 
 Nov.25 '18  
