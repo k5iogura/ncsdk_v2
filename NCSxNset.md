@@ -71,3 +71,10 @@ On Virtual box Ubuntu 16.04
 - Python3.5
 - NCSDK v2.8.1.2
 
+**LongRun Estimation 24h**
+We ware testing for LongRun. top command show bellow,
+![](files/top_longrun24h.png)
+
+RaspberryPi-3 use **memory about 150MB** for Linux, X-Window and 2NCS'.  
+Therefore RaspberryPi Zero which has 512MB memory, may run NCS inference job.  
+
