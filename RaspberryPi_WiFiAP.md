@@ -27,6 +27,7 @@ Also assumpt that WiFI Client has a network interface like wlan0.
 - **echo 1 > /proc/sys/net/ipv4/ip_forward**  
 - **Create /etc/iptables.ipv4.nat**  
 - **Create /lib/dhcpcd/dhcpcd-hooks/70-ipv4-nat**  
+- **Edit /usr/bin/Xorg**
 *** 
 
 ### Stop and make disable WiFi Client if RaspberryPi-3 was WiFi Client  
@@ -333,4 +334,21 @@ PING google.co.jp (172.217.25.99) 56(84) bytes of data.
 64 bytes from nrt13s51-in-f99.1e100.net (172.217.25.99): icmp_seq=1 ttl=53 time=21.8 ms
 64 bytes from nrt13s51-in-f99.1e100.net (172.217.25.99): icmp_seq=2 ttl=53 time=22.1 ms
 64 bytes from nrt13s51-in-f99.1e100.net (172.217.25.99): icmp_seq=3 ttl=53 time=28.5 ms
+```
+
+### Allow X-Window access from anywhere
+
+Rasbian stretch has /usr/bin/Xorg(shell script) to invoke X-Window server.  
+To allow X-Window server to accept WiFi termnal access, edit /usr/bin/Xorg file bellow,
+```
+# vi /usr/bin/Xorg
+Xorg :0 -seat seat0 -auth /var/run/lightdm/root/:0 -ac listen tcp vt7 -novtswitch
+```
+
+**-ac** means No Access Control of Xserver but this option is deprecated.
+
+Above modification is the according to bellow,
+```
+$ ps aux | grep Xorg
+root ... 0:01 /usr/lib/xrog/Xorg :0 -seat seat0 -auth /var/run/lightdm/root/:0 -nolisten tcp vt7 -novtswitch
 ```
