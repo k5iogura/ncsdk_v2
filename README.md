@@ -6,6 +6,8 @@
 
 ## [Recent status of Movidius NCS Nov '18](status_of_myriad.md)
 
+## [Recent status of Other AI Chip Dec '18](status_of_OtherAIChip.md)
+
 ## [Can NCS and OpenCV run under Multiprocessing or MultiThread](multi_proc_thread_cv2_mvnc.md)
 
 ## [Result of performance test of Multi NCSticks](NCSxNset.md)
