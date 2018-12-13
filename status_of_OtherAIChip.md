@@ -24,6 +24,7 @@
 - さまざまなサードパーティサービス：Amazonビデオキネシスストリーミング、Microsoft Azureなどのさまざまなクラウドコンピューティングサービスプラットフォームをサポートし、業界情報、リサーチ、分析を提供します。
 
 ![](files/thundercomm_TurboX_AI_Kit.png)
+![](files/ThundercommSeries.jpg)
 
 #### [Google TPU](https://cloud.watch.impress.co.jp/docs/news/1134852.html)
 
