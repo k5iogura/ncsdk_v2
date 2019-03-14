@@ -1,4 +1,9 @@
 # Status movidius now
+
+Mar.14.2019  from ASRock  
+[Press Release](https://asrock.com/IPC/overview.jp.asp?Model=athena%20A1)  
+![](files/athena A1_M1.png)  
+
 Nov.21.2018  from google  
 **Movidius 2nd Generation NCS2(MyriadX)**  
 

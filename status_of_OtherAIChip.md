@@ -1,5 +1,8 @@
 # Status of Other AI Chip Products
 
+### [Google Edge TPU Accelerator](https://aiyprojects.withgoogle.com/edge-tpu)  
+![](files/EdgeTPUaccelerator_and_NCS2.png)  
+
 ### [VIA SOM-9X20 SOMモジュール](https://www.viatech.com/ja/boards-ja/modules/som-9x20/)
 
 #### SnapDragon 820e GPU
