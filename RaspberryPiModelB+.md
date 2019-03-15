@@ -51,7 +51,7 @@ Setup ubuntu
 ```
 # apt update
 # apt upgrade
-# apt get libusb-1.0-0 libusb-1.0-0-dev cmake
+# apt install libusb-1.0-0 libusb-1.0-0-dev cmake
 ```
 ***[Tips:ラズパイカメラを使って連続撮影＆fbiコマンドでCUI画面のフレームバッファに直接表示する方法。SSH経由でもOK！](https://iot-plus.net/make/raspi/raspistill-continuous-shooting-displays-on-cui-using-frame-buffer-with-ssh-connection/)***  
 Disable **Display Blank**  
